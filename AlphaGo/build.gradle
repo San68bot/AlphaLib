@@ -41,6 +41,8 @@ dependencies {
     implementation 'com.acmerobotics.roadrunner:core:0.5.5'
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.3'
 
+    implementation 'com.github.AlphaGo16439:AGDistanceLocalization:v1.0.1'
+
     implementation 'org.firstinspires.ftc:Inspection:7.2.0'
     implementation 'org.firstinspires.ftc:RobotCore:7.2.0'
     implementation 'org.firstinspires.ftc:RobotServer:7.2.0'
