@@ -32,5 +32,5 @@ class IMU(hmap: HardwareMap) {
     val yRotationRate get() = angularVelocity.yRotationRate.toDouble()
     val zRotationRate get() = angularVelocity.zRotationRate.toDouble()
 
-    fun disableIMU() = imu.close()
+    fun disable() = imu.close()
 }

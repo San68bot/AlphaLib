@@ -1,6 +1,7 @@
 package com.san68bot.alphaLib.wrappers
 
 import com.qualcomm.robotcore.hardware.*
+import com.san68bot.alphaLib.field.geometry.Point
 
 class AGps4(val gamepad: Gamepad) {
     init {
@@ -10,8 +11,11 @@ class AGps4(val gamepad: Gamepad) {
     val rightStick = ps4Joystick ({ pad -> pad.right_stick_x.toDouble() }, { pad -> pad.right_stick_y.toDouble() })
     val leftStick = ps4Joystick ({ pad -> pad.left_stick_x.toDouble() }, { pad -> pad.left_stick_y.toDouble() })
 
-    val leftTriggerB = ps4Button { pad -> pad.left_trigger > 0.5 }
-    val rightTriggerB = ps4Button { pad -> pad.right_trigger > 0.5 }
+    val rightStickAngle = Point(rightStick.x, -rightStick.y).angleToUnitCircle(Point.ORIGIN)
+    val leftStickAngle = Point(leftStick.x, -leftStick.y).angleToUnitCircle(Point.ORIGIN)
+
+    val leftTriggerButton = ps4Button { pad -> pad.left_trigger > 0.5 }
+    val rightTriggerButton = ps4Button { pad -> pad.right_trigger > 0.5 }
 
     val leftTrigger: Double
         get() = gamepad.left_trigger.toDouble()
@@ -58,12 +62,12 @@ class AGps4(val gamepad: Gamepad) {
     val dDown = ps4Button { pad -> pad.dpad_down }
 
     private val allParts = arrayOf(
-        rightBumper, leftBumper,
+        leftBumper, rightBumper,
         cross, circle, square, triangle,
         dLeft, dRight, dUp, dDown,
         leftStick, rightStick,
-        leftTriggerB, rightTriggerB,
-        rightStickButton, leftStickButton,
+        leftTriggerButton, rightTriggerButton,
+        leftStickButton, rightStickButton,
         touchpad
     )
 

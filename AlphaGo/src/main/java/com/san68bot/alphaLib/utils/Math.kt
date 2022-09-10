@@ -1,7 +1,10 @@
 package com.san68bot.alphaLib.utils
 
 import com.qualcomm.robotcore.util.Range
+import com.san68bot.alphaLib.field.geometry.Angle
+import com.san68bot.alphaLib.field.geometry.Point
 import kotlin.math.absoluteValue
+import kotlin.math.atan2
 
 infix fun Double.clip(range:Double) = Range.clip(this, -range, range)
 infix fun Double.threshold(threshold: Double) = if (this.absoluteValue < threshold) 0.0 else this
@@ -25,3 +28,8 @@ infix fun Double.round(decimals: Int): Double {
 }
 
 fun Double.notNaN() = !this.isNaN()
+
+fun unitCircleArctan(point1: Point, point2: Point = Point.ORIGIN): Angle {
+    val angle = atan2(point1.y - point2.y, point2.x - point1.x);
+    return Angle(angle + Math.PI, Angle.Unit.RAD)
+}

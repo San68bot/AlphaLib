@@ -14,7 +14,7 @@ fun AGMotor(config: String, motorType: KClass<*>, gearRatio: Double = 1.0, hmap:
 class AlphaGoMotor(config: String, motorType: KClass<*>, gearRatio: Double = 1.0, hmap: HardwareMap) {
     val motor by lazy { hmap.get(DcMotorEx::class.java, config) }
     private val type = MotorConfigurationType.getMotorType(motorType.java)
-    val encoder by lazy { AGEncoder(config, type.ticksPerRev, gearRatio, hmap) }
+    val encoder by lazy { AGEncoder(motor, type.ticksPerRev, gearRatio, hmap) }
 
     fun setMaxAchievableFraction(): AlphaGoMotor {
         val motorConfigurationType = motor.motorType.clone()

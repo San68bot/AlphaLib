@@ -5,9 +5,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.san68bot.alphaLib.field.geometry.TAU
 
-class AGEncoder(config: String, private val ticksPerRev: Double, private val gearRatio: Double = 1.0, hmap: HardwareMap) {
-    private val encoder = hmap.get(DcMotorEx::class.java, config)
-
+class AGEncoder(private val encoder: DcMotorEx, private val ticksPerRev: Double, private val gearRatio: Double = 1.0, hmap: HardwareMap) {
+    private var multiplier = 1.0
     private var position = 0.0
     private var lastPosition = 0.0
 
@@ -16,7 +15,7 @@ class AGEncoder(config: String, private val ticksPerRev: Double, private val gea
             val pos = encoder.currentPosition.toDouble()
             position += (pos - lastPosition)
             lastPosition = pos
-            return position
+            return position * multiplier
         }
 
     val rotations: Double
@@ -24,9 +23,7 @@ class AGEncoder(config: String, private val ticksPerRev: Double, private val gea
     val radians: Double
         get() = rotations * TAU
 
-    fun reverse() {
-        encoder.direction = DcMotorSimple.Direction.REVERSE
-    }
+    fun reverse() { multiplier = -1.0 }
 
     infix fun reset(newPosition: Double) {
         lastPosition = encoder.currentPosition.toDouble()

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.hardware
+package com.san68bot.alphaLib.wrappers
 
 import com.qualcomm.robotcore.hardware.configuration.annotations.*
 import org.firstinspires.ftc.robotcore.external.navigation.*
