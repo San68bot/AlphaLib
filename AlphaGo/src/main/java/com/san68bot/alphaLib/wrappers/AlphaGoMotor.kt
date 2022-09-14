@@ -3,8 +3,8 @@ package com.san68bot.alphaLib.wrappers
 import com.qualcomm.robotcore.hardware.*
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType
 import com.qualcomm.robotcore.util.Range
-import com.san68bot.alphaLib.field.geometry.TAU
-import com.san68bot.alphaLib.field.geometry.toRadians
+import com.san68bot.alphaLib.geometry.TAU
+import com.san68bot.alphaLib.geometry.toRadians
 import com.san68bot.alphaLib.utils.difference
 import kotlin.math.absoluteValue
 import kotlin.reflect.KClass

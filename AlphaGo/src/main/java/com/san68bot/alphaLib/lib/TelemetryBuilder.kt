@@ -3,7 +3,7 @@ package com.san68bot.alphaLib.lib
 import com.acmerobotics.dashboard.*
 import com.acmerobotics.dashboard.telemetry.*
 import com.acmerobotics.roadrunner.geometry.Pose2d
-import com.san68bot.alphaLib.field.geometry.Pose
+import com.san68bot.alphaLib.geometry.Pose
 import org.firstinspires.ftc.robotcore.external.*
 import kotlin.math.PI
 import kotlin.math.cos

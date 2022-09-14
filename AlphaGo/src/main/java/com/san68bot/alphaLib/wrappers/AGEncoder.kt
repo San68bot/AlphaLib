@@ -1,9 +1,8 @@
 package com.san68bot.alphaLib.wrappers
 
 import com.qualcomm.robotcore.hardware.DcMotorEx
-import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
-import com.san68bot.alphaLib.field.geometry.TAU
+import com.san68bot.alphaLib.geometry.TAU
 
 class AGEncoder(private val encoder: DcMotorEx, private val ticksPerRev: Double, private val gearRatio: Double = 1.0, hmap: HardwareMap) {
     private var multiplier = 1.0

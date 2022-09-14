@@ -1,4 +1,4 @@
-package com.san68bot.alphaLib.field.geometry
+package com.san68bot.alphaLib.geometry
 
 import kotlin.math.PI
 import kotlin.math.atan2

@@ -1,7 +1,7 @@
 package com.san68bot.alphaLib.wrappers
 
 import com.qualcomm.robotcore.hardware.*
-import com.san68bot.alphaLib.field.geometry.Point
+import com.san68bot.alphaLib.geometry.Point
 
 class AGps4(val gamepad: Gamepad) {
     init {

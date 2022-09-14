@@ -1,5 +1,6 @@
-package com.san68bot.alphaLib.field.geometry
+package com.san68bot.alphaLib.geometry
 
+import com.san68bot.alphaLib.utils.*
 import kotlin.math.*
 
 data class Angle(var heading: Double, var unit: Angle.Unit) {
@@ -45,6 +46,12 @@ data class Angle(var heading: Double, var unit: Angle.Unit) {
             angle -= FULL_CIRCLE
         return createUnwrappedRad(angle)
     }
+
+    fun angleToEulerValue() = angleToEuler(this)
+    fun eulerToAngleValue() = eulerToAngle(this)
+    fun eulerToAngleModifiedValue() = eulerToAngleModified(this)
+    fun unitCircleToHalfCircleValue() = unitCircleToHalfCircle(rad)
+    fun halfCircleToUnitCircleValue() = halfCircleToUnitCircle(deg)
 
     operator fun plus(other: Angle) = when (unit) {
         Unit.RAD -> createUnwrappedRad(rad + other.rad)
