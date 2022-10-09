@@ -1,4 +1,4 @@
-package com.san68bot.alphaLib.control.logic
+package com.san68bot.alphaLib.control.logicControllers
 
 import com.san68bot.alphaLib.utils.OneTime
 import com.san68bot.alphaLib.wrappers.util.ActionTimer

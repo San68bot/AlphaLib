@@ -58,3 +58,16 @@ fun halfCircleToUnitCircle(deg: Double): Double {
     if (rad >= 2* PI) rad -= 2* PI
     return rad
 }
+
+fun angleBetween_deg(point: Point, otherPoint: Point): Double {
+    return atan2(otherPoint.x - point.x, otherPoint.y - point.y).toDegrees
+}
+
+fun angleWrap_deg(_angle: Double): Double {
+    var angle = _angle
+    while (angle < -180.0)
+        angle += 360.0
+    while (angle > 180.0)
+        angle -= 360.0
+    return angle
+}

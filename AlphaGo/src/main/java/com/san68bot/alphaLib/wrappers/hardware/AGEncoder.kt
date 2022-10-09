@@ -4,9 +4,17 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.san68bot.alphaLib.geometry.TAU
 
-class AGEncoder(private val encoder: DcMotorEx, private val ticksPerRev: Double, private val gearRatio: Double = 1.0) {
-    constructor(encoder: String, ticksPerRev: Double, gearRatio: Double = 1.0, hmap: HardwareMap)
-            : this(hmap.get(DcMotorEx::class.java, encoder), ticksPerRev, gearRatio)
+class AGEncoder(
+    private val encoder: DcMotorEx,
+    private val ticksPerRev: Double,
+    private val gearRatio: Double = 1.0
+) {
+    constructor(
+        encoder: String,
+        ticksPerRev: Double,
+        gearRatio: Double = 1.0,
+        hmap: HardwareMap
+    ) : this(hmap.get(DcMotorEx::class.java, encoder), ticksPerRev, gearRatio)
 
     private var multiplier = 1.0
     private var position = 0.0

@@ -9,9 +9,20 @@ import com.san68bot.alphaLib.utils.math.difference
 import kotlin.math.absoluteValue
 import kotlin.reflect.KClass
 
-fun AGMotor(config: String, motorType: KClass<*>, gearRatio: Double = 1.0, hmap: HardwareMap,
-            block: AlphaGoMotor.() -> Unit = {}): AlphaGoMotor = AlphaGoMotor(config, motorType, gearRatio, hmap).apply(block)
-class AlphaGoMotor(config: String, motorType: KClass<*>, gearRatio: Double = 1.0, hmap: HardwareMap) {
+fun AlphaGoMotor(
+    config: String,
+    motorType: KClass<*>,
+    gearRatio: Double = 1.0,
+    hmap: HardwareMap,
+    block: AlphaGoMotor.() -> Unit = {}
+): AlphaGoMotor = AlphaGoMotor(config, motorType, gearRatio, hmap).apply(block)
+
+class AlphaGoMotor(
+    config: String,
+    motorType: KClass<*>,
+    gearRatio: Double = 1.0,
+    hmap: HardwareMap
+) {
     val motor by lazy { hmap.get(DcMotorEx::class.java, config) }
     private val type = MotorConfigurationType.getMotorType(motorType.java)
     val encoder by lazy { AGEncoder(motor, type.ticksPerRev, gearRatio) }

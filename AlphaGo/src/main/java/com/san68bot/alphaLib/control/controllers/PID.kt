@@ -1,21 +1,28 @@
 package com.san68bot.alphaLib.control.controllers
 
-import com.qualcomm.robotcore.util.ElapsedTime
+import com.san68bot.alphaLib.wrappers.util.ActionTimer
 import kotlin.math.abs
 
 class PID(
     private var kP: Double, private var kI: Double, private var kD: Double, private var kStatic: Double,
-    private var leeway: Double = 0.0, private var integralThreshold: Double, private val time: ElapsedTime
+    private var leeway: Double = 0.0, private var integralThreshold: Double
 ) {
     private var targetTheta = 0.0
 
     private var error = 0.0
     private var prev_error = 0.0
 
-    private var prev_time = time.seconds()
+    private val timer = ActionTimer()
+    private var prev_time = 0.0
 
     private var integral = 0.0
     private var derivative = 0.0
+
+    init {
+        prev_time = timer.seconds
+        integral = 0.0
+        derivative = 0.0
+    }
 
     fun target(targetTheta: Double): PID { this.targetTheta = targetTheta; return this }
 
@@ -35,7 +42,7 @@ class PID(
     }
 
     fun update(currentTheta: Double): Double {
-        val current_time = time.seconds()
+        val current_time = timer.seconds
         val delta_time = (current_time - prev_time)
         prev_time = current_time
 
@@ -49,8 +56,8 @@ class PID(
         derivative = if (delta_time != 0.0) delta_error / delta_time else 0.0
 
         return when {
-            error() > leeway -> (kP * error()) + (kI * integral) + (kD * derivative) + kStatic
-            error() < -leeway -> (kP * error()) + (kI * integral) + (kD * derivative) - kStatic
+            error > leeway -> (kP * error) + (kI * integral) + (kD * derivative) + kStatic
+            error < -leeway -> (kP * error) + (kI * integral) + (kD * derivative) - kStatic
             else -> 0.0
         }
     }

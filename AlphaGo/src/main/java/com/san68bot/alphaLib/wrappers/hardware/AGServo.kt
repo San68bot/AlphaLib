@@ -2,7 +2,12 @@ package com.san68bot.alphaLib.wrappers.hardware
 
 import com.qualcomm.robotcore.hardware.*
 
-class AGServo(config: String, hmap: HardwareMap, maxAngle: Double = 270.0, gearRatio: Double = 1.0) {
+class AGServo(
+    config: String,
+    hmap: HardwareMap,
+    maxAngle: Double = 270.0,
+    gearRatio: Double = 1.0
+) {
     private val servo = hmap.get(ServoImplEx::class.java, config)
     private val newMaxAngle = maxAngle * gearRatio
 
