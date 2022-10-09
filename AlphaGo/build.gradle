@@ -39,7 +39,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.5.1'
 
     implementation 'com.acmerobotics.roadrunner:core:0.5.5'
-    implementation 'com.acmerobotics.dashboard:dashboard:0.4.4'
+    implementation 'com.acmerobotics.dashboard:dashboard:0.4.5'
 
     implementation 'com.github.AlphaGo16439:AGDistanceLocalization:v1.0.1'
 

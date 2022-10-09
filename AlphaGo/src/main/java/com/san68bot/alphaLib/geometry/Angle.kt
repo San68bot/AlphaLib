@@ -1,9 +1,11 @@
 package com.san68bot.alphaLib.geometry
 
-import com.san68bot.alphaLib.utils.*
+import com.san68bot.alphaLib.utils.math.*
 import kotlin.math.*
 
 data class Angle(var heading: Double, var unit: Angle.Unit) {
+    enum class Unit { RAD, DEG }
+
     private val FULL_CIRCLE = when (unit) {
         Unit.RAD -> TAU
         Unit.DEG -> 360.0
@@ -36,8 +38,6 @@ data class Angle(var heading: Double, var unit: Angle.Unit) {
         val Number.radians: Angle get() = Angle(this.toDouble(), Unit.RAD)
     }
 
-    enum class Unit { RAD, DEG }
-
     fun wrapped(): Angle {
         var angle = heading
         while (angle < -HALF_CIRCLE)
@@ -52,20 +52,6 @@ data class Angle(var heading: Double, var unit: Angle.Unit) {
     fun eulerToAngleModifiedValue() = eulerToAngleModified(this)
     fun unitCircleToHalfCircleValue() = unitCircleToHalfCircle(rad)
     fun halfCircleToUnitCircleValue() = halfCircleToUnitCircle(deg)
-
-    operator fun plus(other: Angle) = when (unit) {
-        Unit.RAD -> createUnwrappedRad(rad + other.rad)
-        Unit.DEG -> createUnwrappedDeg(deg + other.deg)
-    }
-
-    operator fun minus(other: Angle) = plus(other.unaryMinus())
-
-    operator fun unaryMinus() = when (unit) {
-        Unit.RAD -> createUnwrappedRad(-rad)
-        Unit.DEG -> createUnwrappedDeg(-deg)
-    }
-
-    operator fun times(scaler: Double) = Angle(heading * scaler, unit)
 
     val sin = sin(rad)
     val cos = cos(rad)

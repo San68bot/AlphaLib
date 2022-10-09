@@ -1,5 +1,7 @@
 package com.san68bot.alphaLib.utils
 
+import com.san68bot.alphaLib.utils.math.round
+
 class ConfigRange(@JvmField var min: Double, @JvmField var max: Double) {
     private val range get() = min..max
     infix fun contains(value: Double) = value in range
