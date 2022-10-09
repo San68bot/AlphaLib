@@ -10,6 +10,7 @@ import com.san68bot.alphaLib.wrappers.imu.IMU
 import kotlin.math.PI
 
 class TwoWheelOdometry(
+    encoderConfigVH: ArrayList<String>,
     wheelDia: Double,
     private val xTrackWidth: Double,
     private val yTrackWidth: Double,
@@ -17,14 +18,14 @@ class TwoWheelOdometry(
     hmap: HardwareMap
 ): Localizer {
     private val verticalEncoder = AGEncoder(
-        "verticalEncoder",
+        encoderConfigVH[0],
         8192.0,
         1.0,
         hmap
     )
 
     private val horizontalEncoder = AGEncoder(
-        "horizontalEncoder",
+        encoderConfigVH[1],
         8192.0,
         1.0,
         hmap

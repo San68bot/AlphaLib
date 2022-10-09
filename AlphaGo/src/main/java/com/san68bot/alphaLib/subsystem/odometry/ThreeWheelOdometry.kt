@@ -9,27 +9,28 @@ import com.san68bot.alphaLib.wrappers.hardware.AGEncoder
 import kotlin.math.PI
 
 class ThreeWheelOdometry(
+    encoderConfigLRA: ArrayList<String>,
     wheelDia: Double,
     private val lateralTrackWidth: Double,
     private val auxTrackWidth: Double,
     hmap: HardwareMap
 ): Localizer{
     private val leftEncoder = AGEncoder(
-        "leftEncoder",
+        encoderConfigLRA[0],
         8192.0,
         1.0,
         hmap
     )
 
     private val rightEncoder = AGEncoder(
-        "rightEncoder",
+        encoderConfigLRA[1],
         8192.0,
         1.0,
         hmap
     )
 
     private val auxEncoder = AGEncoder(
-        "auxEncoder",
+        encoderConfigLRA[2],
         8192.0,
         1.0,
         hmap

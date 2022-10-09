@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.*
 import com.acmerobotics.dashboard.telemetry.*
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.san68bot.alphaLib.geometry.Pose
+import com.san68bot.alphaLib.utils.math.round
 import org.firstinspires.ftc.robotcore.external.*
 import kotlin.math.PI
 import kotlin.math.cos
@@ -22,7 +23,7 @@ class TelemetryBuilder(private val telemetry: Telemetry) {
 
     fun add(key: String?, value: Any?): TelemetryBuilder {
         packet.put(key, value)
-        telemetry.addData(key, value)
+        telemetry.addData(key, if (value is Number) (value.toDouble() round 3) else value)
         return this
     }
 
