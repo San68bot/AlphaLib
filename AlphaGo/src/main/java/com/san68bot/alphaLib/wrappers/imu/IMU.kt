@@ -2,11 +2,12 @@ package com.san68bot.alphaLib.wrappers.imu
 
 import com.qualcomm.hardware.bosch.BNO055IMU
 import com.qualcomm.robotcore.hardware.HardwareMap
+import com.san68bot.alphaLib.utils.field.Globals
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation
 
-class IMU(hmap: HardwareMap) {
+class IMU(hmap: HardwareMap = Globals.hmap) {
     private val imu: BNO055IMU = hmap.get(BNO055IMU::class.java, "imu")
 
     init {

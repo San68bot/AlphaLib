@@ -5,6 +5,7 @@ import com.san68bot.alphaLib.control.motion.localizer.method.TwoWheelMath
 import com.san68bot.alphaLib.geometry.Point
 import com.san68bot.alphaLib.geometry.Pose
 import com.san68bot.alphaLib.subsystem.Localizer
+import com.san68bot.alphaLib.utils.field.Globals
 import com.san68bot.alphaLib.wrappers.hardware.AGEncoder
 import com.san68bot.alphaLib.wrappers.imu.IMU
 import kotlin.math.PI
@@ -15,7 +16,7 @@ class TwoWheelOdometry(
     private val xTrackWidth: Double,
     private val yTrackWidth: Double,
     private val imu: IMU,
-    hmap: HardwareMap
+    hmap: HardwareMap = Globals.hmap
 ): Localizer {
     private val verticalEncoder = AGEncoder(
         encoderConfigVH[0],

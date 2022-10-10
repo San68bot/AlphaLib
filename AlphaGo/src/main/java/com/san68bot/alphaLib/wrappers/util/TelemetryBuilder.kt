@@ -14,6 +14,8 @@ import kotlin.math.sqrt
 class TelemetryBuilder(private val telemetry: Telemetry) {
     var packet = TelemetryPacket()
         private set
+    var ftcDashboard: FtcDashboard = FtcDashboard.getInstance()
+        private set
 
     fun add(line: String?): TelemetryBuilder {
         packet.addLine(line)
@@ -76,7 +78,8 @@ class TelemetryBuilder(private val telemetry: Telemetry) {
     }
 
     fun update(): TelemetryBuilder {
-        FtcDashboard.getInstance().sendTelemetryPacket(packet)
+        ftcDashboard = FtcDashboard.getInstance()
+        ftcDashboard.sendTelemetryPacket(packet)
         packet = TelemetryPacket()
         telemetry.update()
         return this

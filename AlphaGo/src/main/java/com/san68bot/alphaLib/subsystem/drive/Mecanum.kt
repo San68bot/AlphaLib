@@ -8,7 +8,7 @@ import com.san68bot.alphaLib.subsystem.Subsystem
 import com.san68bot.alphaLib.utils.math.round
 import kotlin.math.abs
 
-class Mecanum(
+open class Mecanum(
     xPID: PIDConstants,
     yPID: PIDConstants,
     turnPID: PIDConstants

@@ -3,6 +3,7 @@ package com.san68bot.alphaLib.wrappers.hardware
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.san68bot.alphaLib.geometry.TAU
+import com.san68bot.alphaLib.utils.field.Globals
 
 class AGEncoder(
     private val encoder: DcMotorEx,
@@ -13,7 +14,7 @@ class AGEncoder(
         encoder: String,
         ticksPerRev: Double,
         gearRatio: Double = 1.0,
-        hmap: HardwareMap
+        hmap: HardwareMap = Globals.hmap
     ) : this(hmap.get(DcMotorEx::class.java, encoder), ticksPerRev, gearRatio)
 
     private var multiplier = 1.0

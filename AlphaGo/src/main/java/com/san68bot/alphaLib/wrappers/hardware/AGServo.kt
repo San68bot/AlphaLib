@@ -1,10 +1,11 @@
 package com.san68bot.alphaLib.wrappers.hardware
 
 import com.qualcomm.robotcore.hardware.*
+import com.san68bot.alphaLib.utils.field.Globals
 
 class AGServo(
     config: String,
-    hmap: HardwareMap,
+    hmap: HardwareMap = Globals.hmap,
     maxAngle: Double = 270.0,
     gearRatio: Double = 1.0
 ) {

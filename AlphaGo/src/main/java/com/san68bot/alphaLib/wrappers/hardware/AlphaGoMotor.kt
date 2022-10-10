@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import com.qualcomm.robotcore.util.Range
 import com.san68bot.alphaLib.geometry.TAU
 import com.san68bot.alphaLib.geometry.toRadians
+import com.san68bot.alphaLib.utils.field.Globals
 import com.san68bot.alphaLib.utils.math.difference
 import kotlin.math.absoluteValue
 import kotlin.reflect.KClass
@@ -13,7 +14,7 @@ fun AlphaGoMotor(
     config: String,
     motorType: KClass<*>,
     gearRatio: Double = 1.0,
-    hmap: HardwareMap,
+    hmap: HardwareMap = Globals.hmap,
     block: AlphaGoMotor.() -> Unit = {}
 ): AlphaGoMotor = AlphaGoMotor(config, motorType, gearRatio, hmap).apply(block)
 
@@ -21,7 +22,7 @@ class AlphaGoMotor(
     config: String,
     motorType: KClass<*>,
     gearRatio: Double = 1.0,
-    hmap: HardwareMap
+    hmap: HardwareMap = Globals.hmap
 ) {
     val motor by lazy { hmap.get(DcMotorEx::class.java, config) }
     private val type = MotorConfigurationType.getMotorType(motorType.java)

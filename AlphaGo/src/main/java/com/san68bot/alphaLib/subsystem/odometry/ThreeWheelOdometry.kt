@@ -5,6 +5,7 @@ import com.san68bot.alphaLib.control.motion.localizer.method.ThreeWheelMath
 import com.san68bot.alphaLib.geometry.Point
 import com.san68bot.alphaLib.geometry.Pose
 import com.san68bot.alphaLib.subsystem.Localizer
+import com.san68bot.alphaLib.utils.field.Globals
 import com.san68bot.alphaLib.wrappers.hardware.AGEncoder
 import kotlin.math.PI
 
@@ -13,7 +14,7 @@ class ThreeWheelOdometry(
     wheelDia: Double,
     private val lateralTrackWidth: Double,
     private val auxTrackWidth: Double,
-    hmap: HardwareMap
+    hmap: HardwareMap = Globals.hmap
 ): Localizer{
     private val leftEncoder = AGEncoder(
         encoderConfigLRA[0],
