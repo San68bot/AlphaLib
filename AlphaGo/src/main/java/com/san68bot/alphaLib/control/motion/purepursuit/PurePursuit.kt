@@ -1,8 +1,10 @@
 package com.san68bot.alphaLib.control.motion.purepursuit
 
+import com.san68bot.alphaLib.control.motion.drive.DriveMotion
 import com.san68bot.alphaLib.control.motion.drive.DriveMotion.drive_omega
 import com.san68bot.alphaLib.control.motion.drive.DriveMotion.drive_xv
 import com.san68bot.alphaLib.control.motion.drive.DriveMotion.drive_yv
+import com.san68bot.alphaLib.control.motion.drive.DriveMotion.turnToTheta
 import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_deg
 import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_point
 import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_x
@@ -12,6 +14,7 @@ import com.san68bot.alphaLib.geometry.Point
 import com.san68bot.alphaLib.geometry.Pose
 import com.san68bot.alphaLib.utils.math.angleBetween_deg
 import com.san68bot.alphaLib.utils.math.angleWrap_deg
+import com.san68bot.alphaLib.utils.math.halfCircleToUnitCircle
 import com.san68bot.alphaLib.utils.math.notNaN
 import kotlin.math.*
 
@@ -57,7 +60,7 @@ object PurePursuit {
 
     private fun goToFollowPoint(targetPoint: Point, robot: Point, followAngle: Double) {
         val angleBetween = angleBetween_deg(robot, targetPoint)
-        //DriveInternals.gtpRaw(targetPoint.x, targetPoint.y, angleBetween + followAngle)
+        DriveMotion.goToPoint(targetPoint.x, targetPoint.y, angleBetween + followAngle, external = false)
     }
 
     fun PurePursuitPath.follow(followAngle: Double = 0.0, distanceError: Double = 3.0, angleErrorDEG: Double = 5.0, reverse: Boolean = false): Boolean =
@@ -99,8 +102,8 @@ object PurePursuit {
                 reverse -> angleBetween_deg(path.curvePoints[path.curvePoints.size - 2].point, finalPoint.point) - 180.0
                 else -> angleBetween_deg(path.curvePoints[path.curvePoints.size - 2].point, finalPoint.point)
             }
-            //DriveInternals.gtpRaw(finalPoint.point.x, finalPoint.point.y, angle)
-            angleError = (angle.degrees.halfCircleToUnitCircleValue())//.turnToTheta().deg).absoluteValue
+            DriveMotion.goToPoint(finalPoint.point.x, finalPoint.point.y, angle, external = false)
+            angleError = abs((halfCircleToUnitCircle(angle)).turnToTheta().deg)
         }
         return distToEndPoint < distanceError && angleError <= angleErrorDEG
     }

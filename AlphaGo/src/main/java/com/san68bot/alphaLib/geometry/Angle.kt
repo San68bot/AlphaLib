@@ -36,6 +36,9 @@ data class Angle(var heading: Double, var unit: Angle.Unit) {
 
         val Number.degrees: Angle get() = Angle(this.toDouble(), Unit.DEG)
         val Number.radians: Angle get() = Angle(this.toDouble(), Unit.RAD)
+
+        fun unitCircleToHalfCircleValue(rad: Double) = unitCircleToHalfCircle(rad)
+        fun halfCircleToUnitCircleValue(deg: Double) = halfCircleToUnitCircle(deg)
     }
 
     fun wrapped(): Angle {
@@ -50,8 +53,20 @@ data class Angle(var heading: Double, var unit: Angle.Unit) {
     fun angleToEulerValue() = angleToEuler(this)
     fun eulerToAngleValue() = eulerToAngle(this)
     fun eulerToAngleModifiedValue() = eulerToAngleModified(this)
-    fun unitCircleToHalfCircleValue() = unitCircleToHalfCircle(rad)
-    fun halfCircleToUnitCircleValue() = halfCircleToUnitCircle(deg)
+
+    operator fun plus(other: Angle) = when (unit) {
+        Unit.RAD -> createUnwrappedRad(rad + other.rad)
+        Unit.DEG -> createUnwrappedDeg(deg + other.deg)
+    }
+
+    operator fun minus(other: Angle) = plus(other.unaryMinus())
+
+    operator fun unaryMinus() = when (unit) {
+        Unit.RAD -> createUnwrappedRad(-rad)
+        Unit.DEG -> createUnwrappedDeg(-deg)
+    }
+
+    operator fun times(scaler: Double) = Angle(heading * scaler, unit)
 
     val sin = sin(rad)
     val cos = cos(rad)
