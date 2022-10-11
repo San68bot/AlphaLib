@@ -2,18 +2,13 @@ package com.san68bot.alphaLib.control.motion.purepursuit
 
 import com.san68bot.alphaLib.geometry.Point
 
-data class CurvePoint (var point: Point, var followDistance: Double)
+data class CurvePoint (val point: Point, val followDistance: Double)
 
-class PurePursuitPath(private var followDistance: Double) {
-    private val firstFollowDistance = followDistance
+class PurePursuitPath(private val followDistance: Double) {
     val curvePoints = ArrayList<CurvePoint>()
     var finalAngle = Double.NaN
 
     private val last get() = curvePoints.last().point
-
-    fun reset() {
-        followDistance = firstFollowDistance
-    }
 
     fun add(point: Point) {
         curvePoints.add(CurvePoint(point, followDistance))
@@ -30,6 +25,8 @@ class PurePursuitPath(private var followDistance: Double) {
     fun addY(y: Double) {
         add(Point(last.x, y))
     }
+
+    fun get(index: Int) = curvePoints[index].point
 
     infix fun finalAngle(angle: Double): PurePursuitPath {
         finalAngle = angle

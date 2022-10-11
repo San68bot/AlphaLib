@@ -5,6 +5,7 @@ import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_angle
 import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_rad
 import com.san68bot.alphaLib.geometry.Angle
 import com.san68bot.alphaLib.geometry.Point
+import com.san68bot.alphaLib.geometry.toDegrees
 
 @Config
 object Speedometer {
@@ -19,9 +20,9 @@ object Speedometer {
     val radPerSec: Double
         get() = angularVel
     val degPerSec: Double
-        get() = Math.toDegrees(angularVel)
+        get() = angularVel.toDegrees
 
-    var speed: Point = Point(0.0, 0.0)
+    var speed: Point = Point.ORIGIN
         private set
 
     fun update() {

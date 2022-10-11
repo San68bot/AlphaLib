@@ -1,6 +1,7 @@
 package com.san68bot.alphaLib.geometry
 
 import com.san68bot.alphaLib.geometry.Angle.Companion.radians
+import com.san68bot.alphaLib.utils.math.round
 import com.san68bot.alphaLib.utils.math.unitCircleArctan
 import kotlin.math.PI
 import kotlin.math.atan2
@@ -39,7 +40,7 @@ data class Point(
      * Subtracts two points
      */
     operator fun minus(other: Point) =
-        Point(x - other.x, y - other.x)
+        Point(x - other.x, y - other.y)
 
     /**
      * Adds two points
@@ -64,6 +65,11 @@ data class Point(
      */
     operator fun div(scaler: Double) =
         Point(x / scaler, y / scaler)
+
+    /**
+     * String representation of the point
+     */
+    override fun toString(): String = "(${x round 3}, ${y round 3})"
 
     /**
      * The origin point
