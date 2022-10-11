@@ -61,6 +61,8 @@ data class Angle(var heading: Double, var unit: Unit) {
             Unit.DEG -> (-other.deg).degrees
         }
     )
+
+    override fun toString(): String  = "deg: $deg, rad: $rad"
 }
 
 const val TAU = (PI * 2.0)
