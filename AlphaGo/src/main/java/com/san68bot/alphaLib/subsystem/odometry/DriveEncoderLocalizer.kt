@@ -6,7 +6,7 @@ import com.san68bot.alphaLib.geometry.Pose
 import com.san68bot.alphaLib.control.motion.localizer.method.DriveEncoderMath
 import com.san68bot.alphaLib.geometry.Point
 import com.san68bot.alphaLib.subsystem.Localizer
-import com.san68bot.alphaLib.wrappers.hardware.AlphaGoMotor
+import com.san68bot.alphaLib.wrappers.hardware.AGMotor
 import com.san68bot.alphaLib.wrappers.imu.IMU
 import kotlin.math.PI
 
@@ -16,7 +16,7 @@ class DriveEncoderLocalizer(
     wheelDiaIN: Double,
     gearRatio: Double,
     motorTicks: Double,
-    motors: ArrayList<AlphaGoMotor>,
+    motors: ArrayList<AGMotor>,
     imu: IMU
 ): Localizer {
     private val driveEncoders = DriveEncoders(trackWidth, wheelBase, wheelDiaIN, gearRatio, motorTicks, motors, imu)
@@ -48,7 +48,7 @@ class DriveEncoderLocalizer(
         private val wheelDiaIN: Double,
         private val gearRatio: Double,
         private val motorTicks: Double,
-        private val motors: ArrayList<AlphaGoMotor>,
+        private val motors: ArrayList<AGMotor>,
         private val imu: IMU
     ): MecanumDrive(0.0, 0.0, 0.0, trackWidth, wheelBase, 1.0) {
         private fun encoderTicksToInches(ticks: Double) = wheelDiaIN * 2.0 * Math.PI * gearRatio * ticks / motorTicks

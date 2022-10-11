@@ -8,11 +8,11 @@ class AGps4(private val gamepad: Gamepad) {
         PS4Master.add(this)
     }
 
-    val rightStick = ps4Joystick ({ pad -> pad.right_stick_x.toDouble() }, { pad -> pad.right_stick_y.toDouble() })
     val leftStick = ps4Joystick ({ pad -> pad.left_stick_x.toDouble() }, { pad -> pad.left_stick_y.toDouble() })
+    val rightStick = ps4Joystick ({ pad -> pad.right_stick_x.toDouble() }, { pad -> pad.right_stick_y.toDouble() })
 
-    val rightStickAngle = Point(rightStick.x, -rightStick.y).angleToUnitCircle(Point.ORIGIN)
-    val leftStickAngle = Point(leftStick.x, -leftStick.y).angleToUnitCircle(Point.ORIGIN)
+    val leftStickAngle = Point(leftStick.x, -leftStick.y).angleTo_UnitCircle(Point.ORIGIN)
+    val rightStickAngle = Point(rightStick.x, -rightStick.y).angleTo_UnitCircle(Point.ORIGIN)
 
     val leftTriggerButton = ps4Button { pad -> pad.left_trigger > 0.5 }
     val rightTriggerButton = ps4Button { pad -> pad.right_trigger > 0.5 }
@@ -45,11 +45,11 @@ class AGps4(private val gamepad: Gamepad) {
 
     val touchpad = ps4Button { pad -> pad.touchpad }
 
-    val rightBumper = ps4Button { pad -> pad.right_bumper }
     val leftBumper = ps4Button { pad -> pad.left_bumper }
+    val rightBumper = ps4Button { pad -> pad.right_bumper }
 
-    val rightStickButton = ps4Button { pad -> pad.right_stick_button }
     val leftStickButton = ps4Button { pad -> pad.left_stick_button }
+    val rightStickButton = ps4Button { pad -> pad.right_stick_button }
 
     val cross = ps4Button { pad -> pad.cross } //a
     val circle = ps4Button { pad -> pad.circle } //b

@@ -4,14 +4,14 @@ import com.qualcomm.robotcore.util.Range
 import kotlin.math.abs
 
 infix fun Double.clip(range:Double) = Range.clip(this, -range, range)
-infix fun Double.threshold(threshold: Double) = if (abs(this) < threshold) 0.0 else this
+infix fun Double.threshold(threshold: Double) = if (withinThreshold(threshold)) 0.0 else this
 infix fun Double.withinThreshold(threshold: Double) = abs(this) < threshold
 infix fun Double.difference(other: Double) = abs(this - other)
 
 const val pi = Math.PI
 
 const val EPSILON = 1e-6
-infix fun Double.epsilonEquals(other: Double) = this difference other < EPSILON
+infix fun Double.epsilonEquals(other: Double) = (this difference other) < EPSILON
 
 fun avg(vararg nums: Double): Double = nums.average()
 fun sum(vararg nums: Double): Double = nums.sum()

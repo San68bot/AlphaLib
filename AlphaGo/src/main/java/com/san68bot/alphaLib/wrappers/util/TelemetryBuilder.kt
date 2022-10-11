@@ -64,7 +64,7 @@ class TelemetryBuilder(private val telemetry: Telemetry) {
             l * sin(7 * Math.PI / 4 + theta) + y
         )
 
-        val robotPose = Pose(x, y, robotTheta - PI/2.0, true)
+        val robotPose = Pose(x, y, robotTheta - PI/2.0)
         val (lx, ly) = robotPose.headingVec().scale((18.0/2.0), (18.0/2.0))
         val x1 = robotPose.x + lx / 2.0
         val y1 = robotPose.y + ly / 2.0

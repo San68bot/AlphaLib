@@ -1,6 +1,7 @@
 package com.san68bot.alphaLib.geometry
 
 import com.san68bot.alphaLib.geometry.Angle.Companion.radians
+import com.san68bot.alphaLib.utils.math.unitCircleArctan
 import kotlin.math.PI
 import kotlin.math.atan2
 import kotlin.math.hypot
@@ -10,11 +11,11 @@ data class Point(
     @JvmField var y: Double
 ) {
     val hypot get()  = hypot(x, y)
-    val angle get() = Angle.createWrappedRad(atan2(y, x))
+    val angle get() = atan2(y, x).radians
 
     infix fun distanceTo(other: Point): Double = (other - this).hypot
     infix fun angleTo(other: Point): Angle = (this - other).angle
-    infix fun angleToUnitCircle(other: Point): Angle = ((this - other).angle.rad + PI).radians
+    infix fun angleTo_UnitCircle(other: Point): Angle = unitCircleArctan(other, this)
 
     operator fun minus(other: Point) = Point(x - other.x, y - other.x)
     operator fun plus(other: Point) = Point(x + other.x, y + other.y)

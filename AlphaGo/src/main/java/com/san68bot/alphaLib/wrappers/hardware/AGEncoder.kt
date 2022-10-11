@@ -15,7 +15,7 @@ class AGEncoder(
         ticksPerRev: Double,
         gearRatio: Double = 1.0,
         hmap: HardwareMap = Globals.hmap
-    ) : this(hmap.get(DcMotorEx::class.java, encoder), ticksPerRev, gearRatio)
+    ): this(hmap.get(DcMotorEx::class.java, encoder), ticksPerRev, gearRatio)
 
     private var multiplier = 1.0
     private var position = 0.0

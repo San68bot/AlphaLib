@@ -10,15 +10,15 @@ import com.san68bot.alphaLib.utils.math.difference
 import kotlin.math.absoluteValue
 import kotlin.reflect.KClass
 
-fun AlphaGoMotor(
+fun AGMotor(
     config: String,
     motorType: KClass<*>,
     gearRatio: Double = 1.0,
     hmap: HardwareMap = Globals.hmap,
-    block: AlphaGoMotor.() -> Unit = {}
-): AlphaGoMotor = AlphaGoMotor(config, motorType, gearRatio, hmap).apply(block)
+    block: AGMotor.() -> Unit = {}
+): AGMotor = AGMotor(config, motorType, gearRatio, hmap).apply(block)
 
-class AlphaGoMotor(
+class AGMotor(
     config: String,
     motorType: KClass<*>,
     gearRatio: Double = 1.0,
@@ -28,7 +28,7 @@ class AlphaGoMotor(
     private val type = MotorConfigurationType.getMotorType(motorType.java)
     val encoder by lazy { AGEncoder(motor, type.ticksPerRev, gearRatio) }
 
-    fun setMaxAchievableFraction(): AlphaGoMotor {
+    fun setMaxAchievableFraction(): AGMotor {
         val motorConfigurationType = motor.motorType.clone()
         motorConfigurationType.achieveableMaxRPMFraction = 1.0
         motor.motorType = motorConfigurationType
@@ -100,38 +100,38 @@ class AlphaGoMotor(
             }
         }
 
-    val reverse: AlphaGoMotor
+    val reverse: AGMotor
         get() {
             direction = DcMotorSimple.Direction.REVERSE
             encoder.reverse()
             return this
         }
 
-    val float: AlphaGoMotor
+    val float: AGMotor
         get() {
             zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
             return this
         }
 
-    val brake: AlphaGoMotor
+    val brake: AGMotor
         get() {
             zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
             return this
         }
 
-    val RUN_WITHOUT_ENCODER: AlphaGoMotor
+    val RUN_WITHOUT_ENCODER: AGMotor
         get() {
             mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
             return this
         }
 
-    val RUN_USING_ENCODER: AlphaGoMotor
+    val RUN_USING_ENCODER: AGMotor
         get() {
             mode = DcMotor.RunMode.RUN_USING_ENCODER
             return this
         }
 
-    val RUN_TO_POSITION: AlphaGoMotor
+    val RUN_TO_POSITION: AGMotor
         get() {
             mode = DcMotor.RunMode.RUN_TO_POSITION
             return this

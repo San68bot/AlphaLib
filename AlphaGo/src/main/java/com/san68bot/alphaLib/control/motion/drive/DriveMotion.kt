@@ -6,12 +6,11 @@ import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_x
 import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_y
 import com.san68bot.alphaLib.geometry.*
 import com.san68bot.alphaLib.geometry.Angle.Companion.degrees
-import com.san68bot.alphaLib.geometry.Angle.Companion.unitCircleToHalfCircleValue
 import com.san68bot.alphaLib.subsystem.drive.Mecanum
 import com.san68bot.alphaLib.utils.field.Alliance
 import com.san68bot.alphaLib.utils.field.Globals
 import com.san68bot.alphaLib.utils.field.RunData
-import com.san68bot.alphaLib.utils.math.angleWrap_deg
+import com.san68bot.alphaLib.utils.math.angleToEuler
 import com.san68bot.alphaLib.utils.math.halfCircleToUnitCircle
 import com.san68bot.alphaLib.utils.math.threshold
 import com.san68bot.alphaLib.utils.math.unitCircleToHalfCircle
@@ -40,7 +39,11 @@ object DriveMotion {
     fun goToPoint(x: Double, y: Double, theta: Double, external: Boolean = true): MovementResults {
         val xLeft = (x - world_x)
         val yLeft = (y - world_y)
-        val turnLeft = if (external) angleWrap_deg(unitCircleToHalfCircle(theta) - world_deg) else angleWrap_deg(theta - world_deg)
+        val turnLeft = angleToEuler(if (external)
+            (unitCircleToHalfCircle(theta).deg - world_deg).degrees
+        else
+            (theta - world_deg).degrees
+        )
 
         val xPID = Mecanum.xPID
         val yPID = Mecanum.yPID
@@ -49,7 +52,7 @@ object DriveMotion {
         val speed = Speedometer.speed
         val xSpeed = xLeft * xPID.kP - speed.x * xPID.kD
         val ySpeed = yLeft * yPID.kP - speed.y * yPID.kD
-        val turnSpeed = turnLeft * thetaPID.kP - Speedometer.degPerSec * thetaPID.kD
+        val turnSpeed = turnLeft.deg * thetaPID.kP - Speedometer.degPerSec * thetaPID.kD
 
         moveFieldCentric(xSpeed, ySpeed, turnSpeed)
         clipMovement()
@@ -61,8 +64,13 @@ object DriveMotion {
             .add("x-error", xLeft)
             .add("y-error", yLeft)
             .add("theta-error DEG", turnLeft)
-            .drawDrivetrain(x, y, if (external) theta else halfCircleToUnitCircle(theta.toDegrees), if (RunData.ALLIANCE == Alliance.RED) "red" else "cyan", "black")
-        return MovementResults(Pose(xLeft, yLeft, turnLeft.toRadians))
+            .drawDrivetrain(
+                x, y,
+                if (external) theta else halfCircleToUnitCircle(theta.toDegrees).deg,
+                if (RunData.ALLIANCE == Alliance.RED) "red" else "cyan",
+                "black"
+            )
+        return MovementResults(Pose(xLeft, yLeft, turnLeft.deg))
     }
 
     fun Double.turnToTheta(): Angle {
@@ -75,9 +83,9 @@ object DriveMotion {
 
     fun internalPointAngle(theta: Double): Angle {
         val PID = Mecanum.turnPID
-        val turnLeft = angleWrap_deg(unitCircleToHalfCircle(theta) - world_deg)
-        drive_omega = turnLeft * PID.kP - Speedometer.degPerSec * PID.kD
-        return turnLeft.degrees
+        val turnLeft = angleToEuler((unitCircleToHalfCircle(theta).deg - world_deg).degrees)
+        drive_omega = turnLeft.deg * PID.kP - Speedometer.degPerSec * PID.kD
+        return turnLeft
     }
 
     fun AGps4.gamepadDrive(xclip: Double = 1.0, yclip: Double = 1.0, thetaClip: Double = 1.0) {
@@ -90,7 +98,7 @@ object DriveMotion {
         val pointMove = Point(x, y)
         moveRobotCentricVector(
             pointMove.hypot,
-            pointMove.angle - (unitCircleToHalfCircleValue(world_rad)).degrees,
+            pointMove.angle - unitCircleToHalfCircle(world_rad),
             turn
         )
     }

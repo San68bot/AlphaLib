@@ -8,6 +8,7 @@ import com.san68bot.alphaLib.geometry.Angle.Companion.radians
 import com.san68bot.alphaLib.geometry.Point
 import com.san68bot.alphaLib.geometry.Pose
 import com.san68bot.alphaLib.geometry.TAU
+import com.san68bot.alphaLib.utils.math.angleToEuler
 import com.san68bot.alphaLib.utils.math.epsilonEquals
 import kotlin.math.PI
 import kotlin.math.cos
@@ -40,7 +41,7 @@ object TwoWheelMath {
         val r_x = x_delta - xPrediction
         val r_y = y_delta - yPrediction
 
-        val dtheta = Angle.createWrappedRad(angleDelta).rad
+        val dtheta = (angleToEuler(angleDelta.radians)).rad
         val (sineTerm, cosTerm) = if (dtheta epsilonEquals 0.0) {
             1.0 - dtheta * dtheta / 6.0 to dtheta / 2.0
         } else {

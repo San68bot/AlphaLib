@@ -12,8 +12,8 @@ import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_y
 import com.san68bot.alphaLib.geometry.Angle.Companion.degrees
 import com.san68bot.alphaLib.geometry.Point
 import com.san68bot.alphaLib.geometry.Pose
-import com.san68bot.alphaLib.utils.math.angleBetween_deg
-import com.san68bot.alphaLib.utils.math.angleWrap_deg
+import com.san68bot.alphaLib.utils.math.angleToEuler
+import com.san68bot.alphaLib.utils.math.halfCircleArctan
 import com.san68bot.alphaLib.utils.math.halfCircleToUnitCircle
 import com.san68bot.alphaLib.utils.math.notNaN
 import kotlin.math.*
@@ -59,7 +59,7 @@ object PurePursuit {
         hypot(point.x - otherPoint.x, point.y - otherPoint.y)
 
     private fun goToFollowPoint(targetPoint: Point, robot: Point, followAngle: Double) {
-        val angleBetween = angleBetween_deg(robot, targetPoint)
+        val angleBetween = halfCircleArctan(robot, targetPoint).deg
         DriveMotion.goToPoint(targetPoint.x, targetPoint.y, angleBetween + followAngle, external = false)
     }
 
@@ -99,8 +99,8 @@ object PurePursuit {
         } else {
             val angle = when {
                 (path.finalAngle).notNaN() -> path.finalAngle
-                reverse -> angleBetween_deg(path.curvePoints[path.curvePoints.size - 2].point, finalPoint.point) - 180.0
-                else -> angleBetween_deg(path.curvePoints[path.curvePoints.size - 2].point, finalPoint.point)
+                reverse -> halfCircleArctan(path.curvePoints[path.curvePoints.size - 2].point, finalPoint.point).deg - 180.0
+                else -> halfCircleArctan(path.curvePoints[path.curvePoints.size - 2].point, finalPoint.point).deg
             }
             DriveMotion.goToPoint(finalPoint.point.x, finalPoint.point.y, angle, external = false)
             angleError = abs((halfCircleToUnitCircle(angle)).turnToTheta().deg)
@@ -122,7 +122,11 @@ object PurePursuit {
             if (intersections.isNotEmpty()) lastIndex = i
 
             for (intersection in intersections) {
-                val angle = abs(angleWrap_deg((angleBetween_deg(robot.point, intersection) - (world_deg + followAngle))))
+                val angle = abs(
+                    angleToEuler(
+                        (halfCircleArctan(robot.point, intersection).deg - (world_deg + followAngle)).degrees
+                    ).deg
+                )
                 if (angle < closestAngle) {
                     closestAngle = angle
                     followMe = intersection

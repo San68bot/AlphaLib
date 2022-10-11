@@ -42,7 +42,7 @@ object ThreeWheelMath {
         val xDelta = aux_delta - auxRotatePrediction
         val yDelta = (left_delta + right_delta) / 2.0
 
-        val dtheta = Angle.createWrappedRad(angleDelta).rad
+        val dtheta = (angleDelta.radians).rad
         val (sineTerm, cosTerm) = if (dtheta epsilonEquals 0.0) {
             1.0 - dtheta * dtheta / 6.0 to dtheta / 2.0
         } else {
