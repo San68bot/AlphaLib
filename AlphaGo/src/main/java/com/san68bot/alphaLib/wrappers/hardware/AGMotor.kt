@@ -3,6 +3,7 @@ package com.san68bot.alphaLib.wrappers.hardware
 import com.qualcomm.robotcore.hardware.*
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType
 import com.qualcomm.robotcore.util.Range
+import com.san68bot.alphaLib.geometry.Angle
 import com.san68bot.alphaLib.geometry.TAU
 import com.san68bot.alphaLib.geometry.toRadians
 import com.san68bot.alphaLib.utils.field.Globals
@@ -35,41 +36,27 @@ class AGMotor(
         return this
     }
 
-    private var direction: DcMotorSimple.Direction = DcMotorSimple.Direction.FORWARD
-        set(value) {
-            if (value != field) {
-                motor.direction = value
-                field = value
-            }
-        }
-
     fun currentPosition(): Double {
         return encoder.currentPos
     }
 
-    fun currentRadians(): Double {
-        return encoder.radians
+    fun currentAngle(): Angle {
+        return encoder.angle
     }
 
     infix fun resetEncoder(newPosition: Double) {
         encoder reset newPosition
     }
 
-    infix fun resetDegrees(degrees: Double) {
-        resetRadians(degrees.toRadians)
+    infix fun resetEncoder(newAngle: Angle) {
+        encoder reset (newAngle.rad / TAU * type.ticksPerRev)
     }
-
-    infix fun resetRadians(radians: Double) {
-        encoder reset (radians / TAU * type.ticksPerRev)
-    }
-
-    var veloPIDF: PIDFCoefficients = type.hubVelocityParams.pidfCoefficients
-        set(value) {
-            motor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, value)
-            field = value
-        }
 
     val velocity get() = motor.velocity
+
+    infix fun power(value: Double) {
+        power = value
+    }
 
     var power: Double = 0.0
         set(value) {
@@ -80,31 +67,19 @@ class AGMotor(
             }
         }
 
-    infix fun power(value: Double) {
-        power = value
-    }
-
-    var targetPosition: Int = 0
-        set(value) {
-            if (field != value) {
-                motor.targetPosition = value
-                field = value
-            }
-        }
-
-    var targetPositionTolerance: Int = 0
-        set(value) {
-            if (field != value) {
-                motor.targetPositionTolerance = value
-                field = value
-            }
-        }
-
     val reverse: AGMotor
         get() {
             direction = DcMotorSimple.Direction.REVERSE
             encoder.reverse()
             return this
+        }
+
+    private var direction: DcMotorSimple.Direction = DcMotorSimple.Direction.FORWARD
+        set(value) {
+            if (value != field) {
+                motor.direction = value
+                field = value
+            }
         }
 
     val float: AGMotor
@@ -119,6 +94,15 @@ class AGMotor(
             return this
         }
 
+    private var zeroPowerBehavior = DcMotor.ZeroPowerBehavior.UNKNOWN
+        set(value) {
+            if (value != field) {
+                if (value != DcMotor.ZeroPowerBehavior.UNKNOWN)
+                    motor.zeroPowerBehavior = value
+                field = value
+            }
+        }
+
     val RUN_WITHOUT_ENCODER: AGMotor
         get() {
             mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
@@ -131,25 +115,10 @@ class AGMotor(
             return this
         }
 
-    val RUN_TO_POSITION: AGMotor
-        get() {
-            mode = DcMotor.RunMode.RUN_TO_POSITION
-            return this
-        }
-
-    var mode: DcMotor.RunMode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+    private var mode: DcMotor.RunMode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         set(value) {
             if (field != value) {
                 motor.mode = value
-                field = value
-            }
-        }
-
-    private var zeroPowerBehavior = DcMotor.ZeroPowerBehavior.UNKNOWN
-        set(value) {
-            if (value != field) {
-                if (value != DcMotor.ZeroPowerBehavior.UNKNOWN)
-                    motor.zeroPowerBehavior = value
                 field = value
             }
         }

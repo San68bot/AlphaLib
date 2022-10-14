@@ -2,6 +2,8 @@ package com.san68bot.alphaLib.wrappers.hardware
 
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.HardwareMap
+import com.san68bot.alphaLib.geometry.Angle
+import com.san68bot.alphaLib.geometry.Angle.Companion.radians
 import com.san68bot.alphaLib.geometry.TAU
 import com.san68bot.alphaLib.utils.field.Globals
 
@@ -21,6 +23,9 @@ class AGEncoder(
     private var position = 0.0
     private var lastPosition = 0.0
 
+    /**
+     * Current position of the encoder
+     */
     val currentPos: Double
         get() {
             val pos = encoder.currentPosition.toDouble()
@@ -29,10 +34,17 @@ class AGEncoder(
             return position * multiplier
         }
 
+    /**
+     * Number of rotations the encoder has made
+     */
     val rotations: Double
         get() = currentPos / (ticksPerRev * gearRatio)
-    val radians: Double
-        get() = rotations * TAU
+
+    /**
+     * Current angle of the encoder
+     */
+    val angle: Angle
+        get() = (rotations * TAU).radians
 
     fun reverse() { multiplier = -1.0 }
 
