@@ -14,6 +14,8 @@ class AGStateMachine(mainBlock: AGStateMachine.() -> Unit) {
     private var capturedTime = 0.0
     private val oneTimes = arrayListOf(OneTime(), OneTime())
 
+    private val lastState get() = states.last()
+
     init {
         oneTimes.forEach { it.reset() }
         captureTimeOneTime.reset()
@@ -23,7 +25,7 @@ class AGStateMachine(mainBlock: AGStateMachine.() -> Unit) {
     }
 
     private fun resetTransition(runCustomTransition: Boolean = true) {
-        transition.invoke()
+        if (runCustomTransition) transition.invoke()
         oneTimes.forEach { it.reset() }
         capturedTime = 0.0
         captureTimeOneTime.reset()
@@ -74,7 +76,7 @@ class AGStateMachine(mainBlock: AGStateMachine.() -> Unit) {
                             states[currentState].exitAction?.invoke()
                             states[currentState].isCompleted = true
                         }
-                        if (!allStatesCompleted) allStatesCompleted = (states[currentState] == states.last()) && (!oneTimes.last().isActive())
+                        if (!allStatesCompleted) allStatesCompleted = (states[currentState] == lastState) && (!oneTimes.last().isActive())
                     }
                 }
             }
@@ -115,15 +117,15 @@ class AGStateMachine(mainBlock: AGStateMachine.() -> Unit) {
     }
 
     fun AGState.enter(block: () -> Unit) {
-        states.last().enterAction = block
+        lastState.enterAction = block
     }
 
     fun AGState.loop(block: () -> Boolean) {
-        states.last().loopAction = block
+        lastState.loopAction = block
     }
 
     fun AGState.exit(block: () -> Unit) {
-        states.last().exitAction = block
+        lastState.exitAction = block
     }
 
     data class AGState (
