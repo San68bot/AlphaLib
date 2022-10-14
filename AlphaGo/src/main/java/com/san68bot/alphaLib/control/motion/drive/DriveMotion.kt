@@ -44,13 +44,6 @@ object DriveMotion {
     }
 
     /**
-     * Pose wrapper implementation of goToPose
-     */
-    fun Pose.goToPose(): MovementResults {
-        return goToPose(this.x, this.y, this.rad)
-    }
-
-    /**
      * GoToPose implementation that uses PID to move to a specific point
      */
     fun goToPose(x: Double, y: Double, theta: Double, external: Boolean = true): MovementResults {
@@ -86,14 +79,11 @@ object DriveMotion {
     }
 
     /**
-     * Double implementation of pointAngle
+     * Pose wrapper implementation of goToPose
      */
-    fun Double.turnToTheta(): Angle = pointAngle(this)
-
-    /**
-     * Angle implementation of pointAngle
-     */
-    fun Angle.turnToTheta(): Angle = pointAngle(this.rad)
+    fun Pose.goToPose(): MovementResults {
+        return goToPose(this.x, this.y, this.rad)
+    }
 
     /**
      * PointAngle implementation that uses PID to turn to a specific angle
@@ -117,6 +107,16 @@ object DriveMotion {
     }
 
     /**
+     * Double implementation of pointAngle
+     */
+    fun Double.turnToTheta(): Angle = pointAngle(this)
+
+    /**
+     * Angle implementation of pointAngle
+     */
+    fun Angle.turnToTheta(): Angle = pointAngle(this.rad)
+
+    /**
      * Log data to telemetry
      */
     private fun logData(target: Pose, error: Pose) {
@@ -126,10 +126,10 @@ object DriveMotion {
         telemetryBuilder.add("Theta Target(deg)", target.deg)
 
         if (!error.x.isNaN() && !error.y.isNaN())
-            telemetryBuilder.add("Target Error", error.point)
+            telemetryBuilder.add("Target Point Error", error.point)
 
         telemetryBuilder
-            .add("Theta Error(deg)", error.deg)
+            .add("Target Theta Error(deg)", error.deg)
             .drawDrivetrain(
                 target.x, target.y, target.rad,
                 if (ALLIANCE.isRed()) "red" else "cyan", "black"

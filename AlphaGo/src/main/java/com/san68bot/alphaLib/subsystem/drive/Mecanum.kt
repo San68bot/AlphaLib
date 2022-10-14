@@ -13,17 +13,27 @@ open class Mecanum(
     yPID: PIDConstants,
     turnPID: PIDConstants
 ): Subsystem {
+    /**
+     * Powers for each wheel
+     */
     private var frontLeftPower = 0.0
     private var backLeftPower = 0.0
     private var frontRightPower = 0.0
     private var backRightPower = 0.0
 
+    /**
+     * Set PID controllers for each axis
+     */
     init {
         Companion.xPID set xPID
         Companion.yPID set yPID
         Companion.turnPID set turnPID
     }
 
+    /**
+     * Calculate powers for each wheel
+     * Settings powers should be done in a child class
+     */
     override fun update() {
         frontLeftPower = drive_yv + drive_omega + drive_xv
         backLeftPower = drive_yv + drive_omega - drive_xv
@@ -41,6 +51,9 @@ open class Mecanum(
         }
     }
 
+    /**
+     * Logs each wheel power
+     */
     override fun log(): String {
         return "FL: ${ frontLeftPower round 3 }, " +
                "BL: ${ backLeftPower round 3 }, " +
@@ -48,11 +61,17 @@ open class Mecanum(
                "BR: ${ backRightPower round 3 }"
     }
 
+    /**
+     * Getters for each wheel power
+     */
     fun frontLeftPower() = frontLeftPower
     fun backLeftPower() = backLeftPower
     fun frontRightPower() = frontRightPower
     fun backRightPower() = backRightPower
 
+    /**
+     * Access to PID controllers for other classes
+     */
     companion object {
         var xPID = PIDConstants()
         var yPID = PIDConstants()

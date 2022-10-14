@@ -1,6 +1,7 @@
 package com.san68bot.alphaLib.subsystem.odometry
 
 import com.qualcomm.robotcore.hardware.HardwareMap
+import com.san68bot.alphaLib.control.motion.drive.Speedometer
 import com.san68bot.alphaLib.control.motion.localizer.method.TwoWheelMath
 import com.san68bot.alphaLib.geometry.Point
 import com.san68bot.alphaLib.geometry.Pose
@@ -11,7 +12,7 @@ import com.san68bot.alphaLib.wrappers.imu.IMU
 import kotlin.math.PI
 
 class TwoWheelOdometry(
-    encoderConfigVH: ArrayList<String>,
+    encoderConfig_VH: ArrayList<String>,
     wheelDia: Double,
     private val xTrackWidth: Double,
     private val yTrackWidth: Double,
@@ -19,14 +20,14 @@ class TwoWheelOdometry(
     hmap: HardwareMap = Globals.hmap
 ): Localizer {
     private val verticalEncoder = AGEncoder(
-        encoderConfigVH[0],
+        encoderConfig_VH[0],
         8192.0,
         1.0,
         hmap
     )
 
     private val horizontalEncoder = AGEncoder(
-        encoderConfigVH[1],
+        encoderConfig_VH[1],
         8192.0,
         1.0,
         hmap
@@ -47,6 +48,7 @@ class TwoWheelOdometry(
             xTrackWidth,
             yTrackWidth
         )
+        Speedometer.update(inchesTravelled())
     }
 
     override fun inchesTravelled(): Point {

@@ -17,7 +17,7 @@ import com.san68bot.alphaLib.wrappers.util.PS4Master
 import com.san68bot.alphaLib.wrappers.util.TelemetryBuilder
 
 abstract class AlphaGoInterface(
-    private val robot: Robot,
+    val robot: Robot,
     private val alliance: Alliance,
     private val autonomous: Boolean,
     private val startPose: Pose?
@@ -79,8 +79,8 @@ abstract class AlphaGoInterface(
         PurePursuit.reset()
 
         // Setup robot
-        startPose?.let { WorldPosition.setPosition(it) }
         robot.setup()
+        startPose?.let { WorldPosition.setPosition(it) }
 
         // Run on init
         onInit()

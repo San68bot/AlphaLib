@@ -64,7 +64,7 @@ object PurePursuit {
             val followMeCurvePoint = if (lastIndex < allPoints.size - 1) allPoints[lastIndex + 1] else allPoints.last()
 
             val angleBetween = halfCircleArctan(world_point, followMe).deg
-            DriveMotion.goToPoint(followMe.x, followMe.y, angleBetween + followAngle, external = false)
+            DriveMotion.goToPose(followMe.x, followMe.y, angleBetween + followAngle, external = false)
 
             if ((finalPoint.point - world_point).hypot < followMeCurvePoint.followDistance / 2.0)
                 drive_omega = 0.0
@@ -79,7 +79,7 @@ object PurePursuit {
                 reverse -> halfCircleArctan(path.curvePoints[path.curvePoints.size - 2].point, finalPoint.point).deg - 180.0
                 else -> halfCircleArctan(path.curvePoints[path.curvePoints.size - 2].point, finalPoint.point).deg
             }
-            DriveMotion.goToPoint(finalPoint.point.x, finalPoint.point.y, angle, external = false)
+            DriveMotion.goToPose(finalPoint.point.x, finalPoint.point.y, angle, external = false)
             angleError = abs((halfCircleToUnitCircle(angle)).turnToTheta().deg)
         }
         return distToEndPoint < distanceError && angleError <= angleErrorDEG

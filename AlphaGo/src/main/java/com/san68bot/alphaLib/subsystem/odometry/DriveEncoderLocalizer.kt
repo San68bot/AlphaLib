@@ -2,6 +2,7 @@ package com.san68bot.alphaLib.subsystem.odometry
 
 import com.acmerobotics.roadrunner.drive.MecanumDrive
 import com.acmerobotics.roadrunner.geometry.Pose2d
+import com.san68bot.alphaLib.control.motion.drive.Speedometer
 import com.san68bot.alphaLib.geometry.Pose
 import com.san68bot.alphaLib.control.motion.localizer.method.DriveEncoderMath
 import com.san68bot.alphaLib.geometry.Point
@@ -26,6 +27,7 @@ class DriveEncoderLocalizer(
         DriveEncoderMath.update(
             driveEncoders.poseEstimate
         )
+        Speedometer.update(inchesTravelled())
     }
 
     override fun reset(pose: Pose) {
