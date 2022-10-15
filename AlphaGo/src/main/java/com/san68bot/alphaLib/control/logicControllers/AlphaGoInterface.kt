@@ -3,7 +3,7 @@ package com.san68bot.alphaLib.control.logicControllers
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.util.ElapsedTime
 import com.san68bot.alphaLib.control.motion.drive.DriveMotion
-import com.san68bot.alphaLib.control.motion.localizer.WorldPosition
+import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition
 import com.san68bot.alphaLib.control.motion.purepursuit.PurePursuit
 import com.san68bot.alphaLib.geometry.Pose
 import com.san68bot.alphaLib.subsystem.Robot
@@ -80,7 +80,7 @@ abstract class AlphaGoInterface(
 
         // Setup robot
         robot.setup()
-        startPose?.let { WorldPosition.setPosition(it) }
+        startPose?.let { GlobalPosition.setPosition(it) }
 
         // Run on init
         onInit()
@@ -105,7 +105,7 @@ abstract class AlphaGoInterface(
                         onMainLoop()
                     } else { // Run once on start, when opmode has just started
                         // Reset start position
-                        startPose?.let { WorldPosition.setPosition(it) }
+                        startPose?.let { GlobalPosition.setPosition(it) }
 
                         // Reset run timer
                         runTimeTimer.reset()

@@ -1,8 +1,8 @@
 package com.san68bot.alphaLib.control.motion.localizer.method
 
-import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_angle_bisectedArc
-import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_point
-import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_pose
+import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_angle_bisectedArc
+import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_point
+import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_pose
 import com.san68bot.alphaLib.geometry.Angle.Companion.radians
 import com.san68bot.alphaLib.geometry.Point
 import com.san68bot.alphaLib.geometry.Pose
@@ -48,10 +48,10 @@ object TwoWheelMath {
         val y_movement = sinTerm * ry - cosTerm * rx
 
         val finalDelta = Point(
-            y_movement * world_angle_bisectedArc.sin + x_movement * world_angle_bisectedArc.cos,
-            y_movement * world_angle_bisectedArc.cos - x_movement * world_angle_bisectedArc.sin
+            y_movement * global_angle_bisectedArc.sin + x_movement * global_angle_bisectedArc.cos,
+            y_movement * global_angle_bisectedArc.cos - x_movement * global_angle_bisectedArc.sin
         )
-        world_pose = Pose(world_point + finalDelta, bisectedArcToUnitCircle(final_angle.radians))
+        global_pose = Pose(global_point + finalDelta, bisectedArcToUnitCircle(final_angle.radians))
 
         xInchesTraveled += rx
         yInchesTraveled += ry

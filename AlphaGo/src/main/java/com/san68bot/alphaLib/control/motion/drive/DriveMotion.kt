@@ -2,11 +2,11 @@ package com.san68bot.alphaLib.control.motion.drive
 
 import com.san68bot.alphaLib.control.motion.drive.Speedometer.degPerSec
 import com.san68bot.alphaLib.control.motion.drive.Speedometer.speed
-import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_angle
-import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_angle_bisectedArc
-import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_point
-import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_x
-import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_y
+import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_angle
+import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_angle_bisectedArc
+import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_point
+import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_x
+import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_y
 import com.san68bot.alphaLib.geometry.*
 import com.san68bot.alphaLib.subsystem.drive.Mecanum.Companion.turnPID
 import com.san68bot.alphaLib.subsystem.drive.Mecanum.Companion.xPID
@@ -50,9 +50,9 @@ object DriveMotion {
         /**
          * Pose errors
          */
-        val xError = (x - world_x)
-        val yError = (y - world_y)
-        val angleError = fullCircleToBisectedArc(theta - world_angle)
+        val xError = (x - global_x)
+        val yError = (y - global_y)
+        val angleError = fullCircleToBisectedArc(theta - global_angle)
 
         /**
          * Pose speeds using PD controller calculations and robot speed
@@ -90,7 +90,7 @@ object DriveMotion {
         /**
          * Angle errors
          */
-        val angleError = fullCircleToBisectedArc(theta - world_angle)
+        val angleError = fullCircleToBisectedArc(theta - global_angle)
 
         /**
          * Angle speed using PID calculations and robot speed
@@ -100,7 +100,7 @@ object DriveMotion {
         /**
          * Log results
          */
-        logData(Pose(Double.NaN, Double.NaN, theta), Pose(world_point, angleError))
+        logData(Pose(Double.NaN, Double.NaN, theta), Pose(global_point, angleError))
         return angleError
     }
 
@@ -150,7 +150,7 @@ object DriveMotion {
         val pointMove = Point(x, y)
         movementVector(
             pointMove.hypot,
-            pointMove.angle - world_angle_bisectedArc,
+            pointMove.angle - global_angle_bisectedArc,
             turn
         )
     }

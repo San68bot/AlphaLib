@@ -1,7 +1,7 @@
 package com.san68bot.alphaLib.control.motion.drive
 
-import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_angle_bisectedArc
-import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_rad
+import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_angle_bisectedArc
+import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_rad
 import com.san68bot.alphaLib.geometry.Angle
 import com.san68bot.alphaLib.geometry.Point
 import com.san68bot.alphaLib.geometry.toDegrees
@@ -53,15 +53,15 @@ object Speedometer {
         val ySpeed = yTraveledDelta / dt
 
         // Calculate angular velocity
-        omega = (world_rad - lastAngle) / dt
-        lastAngle = world_rad
+        omega = (global_rad - lastAngle) / dt
+        lastAngle = global_rad
 
         // Reset traveled distance for next update
         xTraveledDelta = 0.0
         yTraveledDelta = 0.0
 
         // Sets speed
-        speed = pointDelta(xSpeed, ySpeed, world_angle_bisectedArc)
+        speed = pointDelta(xSpeed, ySpeed, global_angle_bisectedArc)
     }
 
     /**

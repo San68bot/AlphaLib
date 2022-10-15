@@ -5,11 +5,11 @@ import com.san68bot.alphaLib.control.motion.drive.DriveMotion.drive_omega
 import com.san68bot.alphaLib.control.motion.drive.DriveMotion.drive_xv
 import com.san68bot.alphaLib.control.motion.drive.DriveMotion.drive_yv
 import com.san68bot.alphaLib.control.motion.drive.DriveMotion.pointAngle
-import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_deg
-import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_point
-import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_pose
-import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_x
-import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_y
+import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_deg
+import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_point
+import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_pose
+import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_x
+import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_y
 import com.san68bot.alphaLib.control.motion.purepursuit.PurePursuitMath.lineCircleIntersection
 import com.san68bot.alphaLib.control.motion.purepursuit.PurePursuitMath.projectToLine
 import com.san68bot.alphaLib.geometry.Angle
@@ -49,15 +49,15 @@ object PurePursuit {
 
         if (allPoints.isEmpty()) throw IllegalArgumentException("path cannot be empty")
         
-        val curvePoint = findCurvePoint(allPoints, world_point)
+        val curvePoint = findCurvePoint(allPoints, global_point)
 
-        val followMe = getFollowPoint(allPoints, world_pose, curvePoint.followDistance, followAngle)
+        val followMe = getFollowPoint(allPoints, global_pose, curvePoint.followDistance, followAngle)
 
         val finalPoint = allPoints.last()
 
-        val distToEndPoint = hypot(finalPoint.point.x - world_x, finalPoint.point.y - world_y)
+        val distToEndPoint = hypot(finalPoint.point.x - global_x, finalPoint.point.y - global_y)
 
-        if (hypot(finalPoint.point.x - world_x, finalPoint.point.y - world_y) <= curvePoint.followDistance) {
+        if (hypot(finalPoint.point.x - global_x, finalPoint.point.y - global_y) <= curvePoint.followDistance) {
             lastIndex = allPoints.size - 1
             finishingMove = true
         }
@@ -65,9 +65,9 @@ object PurePursuit {
         if (!finishingMove) {
             val followMeCurvePoint = if (lastIndex < allPoints.size - 1) allPoints[lastIndex + 1] else allPoints.last()
 
-            DriveMotion.goToPose(followMe.x, followMe.y, bisectedArcArctan(world_point, followMe) + followAngle.degrees)
+            DriveMotion.goToPose(followMe.x, followMe.y, bisectedArcArctan(global_point, followMe) + followAngle.degrees)
 
-            if ((finalPoint.point - world_point).hypot < followMeCurvePoint.followDistance / 2.0)
+            if ((finalPoint.point - global_point).hypot < followMeCurvePoint.followDistance / 2.0)
                 drive_omega = 0.0
 
             (abs(drive_xv) + abs(drive_yv)).takeIf { it != 0.0 }?.let {
@@ -121,7 +121,7 @@ object PurePursuit {
             for (intersection in intersections) {
                 val angle = abs(
                     fullCircleToBisectedArc(
-                        (bisectedArcArctan(robot.point, intersection).deg - (world_deg + followAngle)).degrees
+                        (bisectedArcArctan(robot.point, intersection).deg - (global_deg + followAngle)).degrees
                     ).deg
                 )
                 if (angle < closestAngle) {

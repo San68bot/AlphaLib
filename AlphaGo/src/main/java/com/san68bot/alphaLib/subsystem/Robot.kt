@@ -1,6 +1,6 @@
 package com.san68bot.alphaLib.subsystem
 
-import com.san68bot.alphaLib.control.motion.localizer.WorldPosition
+import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition
 
 interface Robot {
     val subsystems: List<Subsystem>
@@ -14,7 +14,7 @@ interface Robot {
 
     companion object {
         fun setLocalizer(localizer: Localizer) {
-            WorldPosition.localizer = localizer
+            GlobalPosition.localizer = localizer
         }
     }
 }

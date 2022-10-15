@@ -1,7 +1,7 @@
 package com.san68bot.alphaLib.control.motion.localizer.method
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
-import com.san68bot.alphaLib.control.motion.localizer.WorldPosition
+import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition
 import com.san68bot.alphaLib.geometry.Pose
 import com.san68bot.alphaLib.geometry.TAU
 import kotlin.math.PI
@@ -27,7 +27,7 @@ object DriveEncoderMath {
         if (theta >= TAU) theta -= TAU
         if (theta < 0.0) theta += TAU
 
-        WorldPosition.world_pose = Pose(x, y, theta)
+        GlobalPosition.global_pose = Pose(x, y, theta)
 
         xInchesTraveled += deltaX
         yInchesTraveled += deltaY
@@ -46,7 +46,7 @@ object DriveEncoderMath {
         y = rawPose.x
         theta = rawPose.heading + PI /2.0
 
-        WorldPosition.world_pose = Pose(x, y, theta)
+        GlobalPosition.global_pose = Pose(x, y, theta)
 
         prevX = rawPose.x
         prevY = rawPose.y
