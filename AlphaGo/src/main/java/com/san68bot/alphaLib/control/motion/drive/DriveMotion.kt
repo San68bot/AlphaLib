@@ -2,13 +2,12 @@ package com.san68bot.alphaLib.control.motion.drive
 
 import com.san68bot.alphaLib.control.motion.drive.Speedometer.degPerSec
 import com.san68bot.alphaLib.control.motion.drive.Speedometer.speed
-import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_deg
+import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_angle
+import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_angle_bisectedArc
 import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_point
-import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_rad
 import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_x
 import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_y
 import com.san68bot.alphaLib.geometry.*
-import com.san68bot.alphaLib.geometry.Angle.Companion.degrees
 import com.san68bot.alphaLib.subsystem.drive.Mecanum.Companion.turnPID
 import com.san68bot.alphaLib.subsystem.drive.Mecanum.Companion.xPID
 import com.san68bot.alphaLib.subsystem.drive.Mecanum.Companion.yPID
@@ -45,21 +44,18 @@ object DriveMotion {
 
     /**
      * GoToPose implementation that uses PID to move to a specific point
+     * Must be a unit cirlce angle
      */
-    fun goToPose(x: Double, y: Double, theta: Double, external: Boolean = true): MovementResults {
+    fun goToPose(x: Double, y: Double, theta: Angle): MovementResults {
         /**
          * Pose errors
          */
         val xError = (x - world_x)
         val yError = (y - world_y)
-        val angleError = fullCircleToBisectedArc(if (external)
-            (unitCircleToBisectedArc(theta).deg - world_deg).degrees
-        else
-            (theta - world_deg).degrees
-        )
+        val angleError = fullCircleToBisectedArc(theta - world_angle)
 
         /**
-         * Pose speeds using PID calculations and robot speed
+         * Pose speeds using PD controller calculations and robot speed
          */
         val xSpeed = xError * xPID.kP - speed.x * xPID.kD
         val ySpeed = yError * yPID.kP - speed.y * yPID.kD
@@ -80,41 +76,33 @@ object DriveMotion {
 
     /**
      * Pose wrapper implementation of goToPose
+     * Must be a unit cirlce angle
      */
     fun Pose.goToPose(): MovementResults {
-        return goToPose(this.x, this.y, this.rad)
+        return goToPose(this.x, this.y, this.angle)
     }
 
     /**
      * PointAngle implementation that uses PID to turn to a specific angle
+     * Must be a unit cirlce angle
      */
-    fun pointAngle(theta: Double): Angle {
+    fun pointAngle(theta: Angle): Angle {
         /**
          * Angle errors
          */
-        val turnLeft = fullCircleToBisectedArc((unitCircleToBisectedArc(theta).deg - world_deg).degrees)
+        val angleError = fullCircleToBisectedArc(theta - world_angle)
 
         /**
          * Angle speed using PID calculations and robot speed
          */
-        drive_omega = turnLeft.deg * turnPID.kP - degPerSec * turnPID.kD
+        drive_omega = angleError.deg * turnPID.kP - degPerSec * turnPID.kD
 
         /**
          * Log results
          */
-        logData(Pose(Double.NaN, Double.NaN, theta), Pose(world_point, turnLeft))
-        return turnLeft
+        logData(Pose(Double.NaN, Double.NaN, theta), Pose(world_point, angleError))
+        return angleError
     }
-
-    /**
-     * Double implementation of pointAngle
-     */
-    fun Double.turnToTheta(): Angle = pointAngle(this)
-
-    /**
-     * Angle implementation of pointAngle
-     */
-    fun Angle.turnToTheta(): Angle = pointAngle(this.rad)
 
     /**
      * Log data to telemetry
@@ -162,7 +150,7 @@ object DriveMotion {
         val pointMove = Point(x, y)
         movementVector(
             pointMove.hypot,
-            pointMove.angle - unitCircleToBisectedArc(world_rad),
+            pointMove.angle - world_angle_bisectedArc,
             turn
         )
     }

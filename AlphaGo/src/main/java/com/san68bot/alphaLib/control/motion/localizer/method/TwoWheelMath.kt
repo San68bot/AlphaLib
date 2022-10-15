@@ -1,16 +1,14 @@
 package com.san68bot.alphaLib.control.motion.localizer.method
 
-import com.san68bot.alphaLib.control.motion.localizer.WorldPosition
-import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_angle
+import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_angle_bisectedArc
+import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_point
 import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_pose
-import com.san68bot.alphaLib.geometry.Angle
 import com.san68bot.alphaLib.geometry.Angle.Companion.radians
 import com.san68bot.alphaLib.geometry.Point
 import com.san68bot.alphaLib.geometry.Pose
-import com.san68bot.alphaLib.geometry.TAU
+import com.san68bot.alphaLib.utils.math.bisectedArcToUnitCircle
 import com.san68bot.alphaLib.utils.math.fullCircleToBisectedArc
 import com.san68bot.alphaLib.utils.math.epsilonEquals
-import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -19,7 +17,7 @@ object TwoWheelMath {
     private var last_vertical = 0.0
 
     private var angleOffset = 0.0
-    private var lastAngle = 0.0
+    private var last_angle = 0.0
 
     private var xInchesTraveled = 0.0
     private var yInchesTraveled = 0.0
@@ -28,53 +26,45 @@ object TwoWheelMath {
         horizontalTicks: Double, verticalTicks: Double, imuAngle: Double,
         inchesPerTick: Double, xTrackWidth: Double, yTrackWidth: Double
     ) {
-        val x_delta = (horizontalTicks - last_horizonal) * inchesPerTick
-        val y_delta = (verticalTicks - last_vertical) * inchesPerTick
+        val dx = (horizontalTicks - last_horizonal) * inchesPerTick
+        val dy = (verticalTicks - last_vertical) * inchesPerTick
+        val angle_delta = fullCircleToBisectedArc((imuAngle - last_angle).radians)
 
-        val angleDelta = (imuAngle - lastAngle).angleWrapRad
+        val final_angle = imuAngle + angleOffset
 
-        val finalAngle = imuAngle + angleOffset
+        val xPrediction = angle_delta.rad * xTrackWidth
+        val yPrediction = angle_delta.rad * yTrackWidth
 
-        val xPrediction = angleDelta * xTrackWidth
-        val yPrediction = angleDelta * yTrackWidth
+        val rx = dx - xPrediction
+        val ry = dy - yPrediction
 
-        val r_x = x_delta - xPrediction
-        val r_y = y_delta - yPrediction
-
-        val dtheta = (fullCircleToBisectedArc(angleDelta.radians)).rad
-        val (sineTerm, cosTerm) = if (dtheta epsilonEquals 0.0) {
-            1.0 - dtheta * dtheta / 6.0 to dtheta / 2.0
+        val (sinTerm, cosTerm) = if (angle_delta.rad epsilonEquals 0.0) {
+            1.0 - angle_delta.rad * angle_delta.rad / 6.0 to angle_delta.rad / 2.0
         } else {
-            sin(dtheta) / dtheta to (1.0 - cos(dtheta)) / dtheta
+            sin(angle_delta.rad) / angle_delta.rad to (1.0 - cos(angle_delta.rad)) / angle_delta.rad
         }
-        val x_move = cosTerm * r_y + sineTerm * r_x
-        val y_move = sineTerm * r_y - cosTerm * r_x
 
-        val finalDelta = Point(y_move * world_angle.sin + x_move * world_angle.cos, y_move * world_angle.cos - x_move * world_angle.sin)
-        world_pose = Pose(world_pose.point + finalDelta, finalAngle.radians)
+        val x_movement = cosTerm * ry + sinTerm * rx
+        val y_movement = sinTerm * ry - cosTerm * rx
 
-        xInchesTraveled += r_x
-        yInchesTraveled += r_y
+        val finalDelta = Point(
+            y_movement * world_angle_bisectedArc.sin + x_movement * world_angle_bisectedArc.cos,
+            y_movement * world_angle_bisectedArc.cos - x_movement * world_angle_bisectedArc.sin
+        )
+        world_pose = Pose(world_point + finalDelta, bisectedArcToUnitCircle(final_angle.radians))
+
+        xInchesTraveled += rx
+        yInchesTraveled += ry
 
         last_horizonal = horizontalTicks
         last_vertical = verticalTicks
-        lastAngle = imuAngle
+        last_angle = imuAngle
     }
-
-    private val Double.angleWrapRad: Double
-        get() {
-            var angle = this
-            while (angle > PI)
-                angle -= TAU
-            while (angle < -PI)
-                angle += TAU
-            return angle
-        }
 
     fun xInchesTraveled() = xInchesTraveled
     fun yInchesTraveled() = yInchesTraveled
 
     fun reset(pose: Pose) {
-        angleOffset = pose.rad - lastAngle
+        angleOffset = pose.rad - last_angle
     }
 }

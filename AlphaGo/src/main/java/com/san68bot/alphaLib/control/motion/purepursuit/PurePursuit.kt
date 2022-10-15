@@ -5,7 +5,6 @@ import com.san68bot.alphaLib.control.motion.drive.DriveMotion.drive_omega
 import com.san68bot.alphaLib.control.motion.drive.DriveMotion.drive_xv
 import com.san68bot.alphaLib.control.motion.drive.DriveMotion.drive_yv
 import com.san68bot.alphaLib.control.motion.drive.DriveMotion.pointAngle
-import com.san68bot.alphaLib.control.motion.drive.DriveMotion.turnToTheta
 import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_deg
 import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_point
 import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_pose
@@ -66,7 +65,7 @@ object PurePursuit {
         if (!finishingMove) {
             val followMeCurvePoint = if (lastIndex < allPoints.size - 1) allPoints[lastIndex + 1] else allPoints.last()
 
-            DriveMotion.goToPose(followMe.x, followMe.y, bisectedArcArctan(world_point, followMe).deg + followAngle, external = false)
+            DriveMotion.goToPose(followMe.x, followMe.y, bisectedArcArctan(world_point, followMe) + followAngle.degrees)
 
             if ((finalPoint.point - world_point).hypot < followMeCurvePoint.followDistance / 2.0)
                 drive_omega = 0.0
@@ -81,8 +80,8 @@ object PurePursuit {
                 reverse -> bisectedArcArctan(path.curvePoints[path.curvePoints.size - 2].point, finalPoint.point).deg - 180.0
                 else -> bisectedArcArctan(path.curvePoints[path.curvePoints.size - 2].point, finalPoint.point).deg
             }
-            DriveMotion.goToPose(finalPoint.point.x, finalPoint.point.y, angle, external = false)
-            currentAngleError = pointAngle(bisectedArcToUnitCircle(angle).rad)
+            DriveMotion.goToPose(finalPoint.point.x, finalPoint.point.y, angle.degrees)
+            currentAngleError = pointAngle(bisectedArcToUnitCircle(angle.degrees))
         }
         return distToEndPoint < distanceError && abs(currentAngleError.deg) <= angleError.deg
     }

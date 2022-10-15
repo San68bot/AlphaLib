@@ -30,8 +30,8 @@ fun bisectedArcArctan(point1: Point, point2: Point = Point.ORIGIN): Angle {
 fun fullCircleToBisectedArc(angle: Angle): Angle {
     val euler = angle.rad
     val result = when {
-        euler < -Math.PI -> euler + TAU
-        euler > Math.PI -> euler - TAU
+        euler < -PI -> euler + TAU
+        euler > PI -> euler - TAU
         else -> euler
     }
     return (-result).radians
@@ -69,8 +69,8 @@ fun unitCircleMirrored(angle: Angle): Angle {
 /**
  * Converts a unit circle angle to an angle from -180(left) to 180(right) degrees
  */
-fun unitCircleToBisectedArc(rad: Double): Angle {
-    var deg = rad.toDegrees - 90.0
+fun unitCircleToBisectedArc(angle: Angle): Angle {
+    var deg = angle.deg - 90.0
     if (deg < 0) deg += 360.0
     return fullCircleToBisectedArc(deg.degrees)
 }
@@ -78,8 +78,8 @@ fun unitCircleToBisectedArc(rad: Double): Angle {
 /**
  * Converts an angle from -180(left) to 180(right) degrees to a unit circle angle
  */
-fun bisectedArcToUnitCircle(deg: Double): Angle {
-    var rad = unitCircleMirrored(deg.degrees).rad
+fun bisectedArcToUnitCircle(angle: Angle): Angle {
+    var rad = unitCircleMirrored(angle).rad
     if (rad >= TAU) rad -= TAU
     return rad.radians
 }

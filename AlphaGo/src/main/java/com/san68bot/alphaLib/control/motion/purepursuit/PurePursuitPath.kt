@@ -18,11 +18,11 @@ class PurePursuitPath(private val followDistance: Double) {
         point.forEach { add(it) }
     }
 
-    fun add_x(x: Double) {
+    fun append_x(x: Double) {
         add(Point(x, last.y))
     }
 
-    fun add_y(y: Double) {
+    fun append_y(y: Double) {
         add(Point(last.x, y))
     }
 

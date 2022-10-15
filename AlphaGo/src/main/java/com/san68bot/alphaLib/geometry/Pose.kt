@@ -9,6 +9,7 @@ data class Pose(
     val angle: Angle
 ) {
     constructor(x: Double, y: Double, theta: Double) : this(Point(x, y), theta.radians)
+    constructor(x: Double, y: Double, theta: Angle) : this(Point(x, y), theta)
 
     /**
      * X coordinate of the pose

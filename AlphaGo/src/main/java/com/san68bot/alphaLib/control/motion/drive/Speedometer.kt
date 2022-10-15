@@ -1,6 +1,6 @@
 package com.san68bot.alphaLib.control.motion.drive
 
-import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_angle
+import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_angle_bisectedArc
 import com.san68bot.alphaLib.control.motion.localizer.WorldPosition.world_rad
 import com.san68bot.alphaLib.geometry.Angle
 import com.san68bot.alphaLib.geometry.Point
@@ -61,7 +61,7 @@ object Speedometer {
         yTraveledDelta = 0.0
 
         // Sets speed
-        speed = pointDelta(Point(xSpeed, ySpeed), world_angle)
+        speed = pointDelta(xSpeed, ySpeed, world_angle_bisectedArc)
     }
 
     /**
@@ -76,10 +76,10 @@ object Speedometer {
     /**
      * Calculates the point delta of a point rotated by an angle
      */
-    private fun pointDelta(robotDelta: Point, heading: Angle): Point {
+    private fun pointDelta(x_delta: Double, y_delta: Double, angle: Angle): Point {
         return Point(
-            robotDelta.y * heading.sin + robotDelta.x * heading.cos,
-            robotDelta.y * heading.cos - robotDelta.x * heading.sin
+            y_delta * angle.sin + x_delta * angle.cos,
+            y_delta * angle.cos - x_delta * angle.sin
         )
     }
 }
