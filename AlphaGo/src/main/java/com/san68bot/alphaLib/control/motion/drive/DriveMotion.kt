@@ -50,10 +50,10 @@ object DriveMotion {
         /**
          * Pose errors
          */
-        val xLeft = (x - world_x)
-        val yLeft = (y - world_y)
-        val turnLeft = angleToEuler(if (external)
-            (unitCircleToHalfCircle(theta).deg - world_deg).degrees
+        val xError = (x - world_x)
+        val yError = (y - world_y)
+        val angleError = fullCircleToBisectedArc(if (external)
+            (unitCircleToBisectedArc(theta).deg - world_deg).degrees
         else
             (theta - world_deg).degrees
         )
@@ -61,9 +61,9 @@ object DriveMotion {
         /**
          * Pose speeds using PID calculations and robot speed
          */
-        val xSpeed = xLeft * xPID.kP - speed.x * xPID.kD
-        val ySpeed = yLeft * yPID.kP - speed.y * yPID.kD
-        val turnSpeed = turnLeft.deg * turnPID.kP - degPerSec * turnPID.kD
+        val xSpeed = xError * xPID.kP - speed.x * xPID.kD
+        val ySpeed = yError * yPID.kP - speed.y * yPID.kD
+        val turnSpeed = angleError.deg * turnPID.kP - degPerSec * turnPID.kD
 
         /**
          * Set movement
@@ -74,8 +74,8 @@ object DriveMotion {
         /**
          * Log results
          */
-        logData(Pose(xLeft, yLeft, turnLeft.deg), Pose(x, y, theta))
-        return MovementResults(Pose(xLeft, yLeft, turnLeft.deg))
+        logData(Pose(x, y, theta), Pose(xError, yError, angleError.deg))
+        return MovementResults(Pose(xError, yError, angleError.deg))
     }
 
     /**
@@ -92,7 +92,7 @@ object DriveMotion {
         /**
          * Angle errors
          */
-        val turnLeft = angleToEuler((unitCircleToHalfCircle(theta).deg - world_deg).degrees)
+        val turnLeft = fullCircleToBisectedArc((unitCircleToBisectedArc(theta).deg - world_deg).degrees)
 
         /**
          * Angle speed using PID calculations and robot speed
@@ -102,7 +102,7 @@ object DriveMotion {
         /**
          * Log results
          */
-        logData(Pose(world_point, turnLeft), Pose(Double.NaN, Double.NaN, theta))
+        logData(Pose(Double.NaN, Double.NaN, theta), Pose(world_point, turnLeft))
         return turnLeft
     }
 
@@ -162,7 +162,7 @@ object DriveMotion {
         val pointMove = Point(x, y)
         movementVector(
             pointMove.hypot,
-            pointMove.angle - unitCircleToHalfCircle(world_rad),
+            pointMove.angle - unitCircleToBisectedArc(world_rad),
             turn
         )
     }

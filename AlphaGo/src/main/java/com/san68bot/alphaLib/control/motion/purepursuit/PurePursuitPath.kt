@@ -18,15 +18,13 @@ class PurePursuitPath(private val followDistance: Double) {
         point.forEach { add(it) }
     }
 
-    fun addX(x: Double) {
+    fun add_x(x: Double) {
         add(Point(x, last.y))
     }
 
-    fun addY(y: Double) {
+    fun add_y(y: Double) {
         add(Point(last.x, y))
     }
-
-    fun get(index: Int) = curvePoints[index].point
 
     infix fun finalAngle(angle: Double): PurePursuitPath {
         finalAngle = angle

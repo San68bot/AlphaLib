@@ -15,7 +15,7 @@ object ThreeWheelMath {
     private var last_right = 0.0
     private var last_aux = 0.0
 
-    private var angleBias = 0.0
+    private var angleOffset = 0.0
     private var lastAngle = 0.0
 
     private var xInchesTraveled = 0.0
@@ -35,7 +35,7 @@ object ThreeWheelMath {
         val rightTotal = rightTicks * inchesPerTick
 
         lastAngle = ((leftTotal - rightTotal) / lateralTrackWidth)
-        val finalAngle = lastAngle + angleBias
+        val finalAngle = lastAngle + angleOffset
 
         val auxRotatePrediction = angleDelta * auxTrackWidth
 
@@ -66,6 +66,6 @@ object ThreeWheelMath {
     fun yInchesTraveled() = yInchesTraveled
 
     fun reset(pose: Pose) {
-        angleBias = pose.rad - lastAngle
+        angleOffset = pose.rad - lastAngle
     }
 }

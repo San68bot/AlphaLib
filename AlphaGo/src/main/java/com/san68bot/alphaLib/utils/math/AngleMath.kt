@@ -18,7 +18,7 @@ fun unitCircleArctan(point1: Point, point2: Point = Point.ORIGIN): Angle {
  * Assumes that 0 is straight up
  * Calculates and converts the angle between the two points to an angle from -180(left) to 180(right) degrees
  */
-fun halfCircleArctan(point1: Point, point2: Point = Point.ORIGIN): Angle {
+fun bisectedArcArctan(point1: Point, point2: Point = Point.ORIGIN): Angle {
     return atan2(point2.x - point1.x, point2.y - point1.y).radians
 }
 
@@ -27,7 +27,7 @@ fun halfCircleArctan(point1: Point, point2: Point = Point.ORIGIN): Angle {
  * Converts an angle from 0 to 360 degrees to an angle from -180(left) to 180(right) degrees
  * Was wrapped()
  */
-fun angleToEuler(angle: Angle): Angle {
+fun fullCircleToBisectedArc(angle: Angle): Angle {
     val euler = angle.rad
     val result = when {
         euler < -Math.PI -> euler + TAU
@@ -41,7 +41,7 @@ fun angleToEuler(angle: Angle): Angle {
  * Assumes that 0 is straight up
  * Converts an angle from -180(left) to 180(right) degrees to an angle from 0 to 360 degrees
  */
-fun eulerToAngle(euler: Angle): Angle {
+fun bisectedArcToFullCircle(euler: Angle): Angle {
     val angle = -euler.rad
     val result = when {
         angle < 0 -> angle + TAU
@@ -69,16 +69,16 @@ fun unitCircleMirrored(angle: Angle): Angle {
 /**
  * Converts a unit circle angle to an angle from -180(left) to 180(right) degrees
  */
-fun unitCircleToHalfCircle(rad: Double): Angle {
+fun unitCircleToBisectedArc(rad: Double): Angle {
     var deg = rad.toDegrees - 90.0
     if (deg < 0) deg += 360.0
-    return angleToEuler(deg.degrees)
+    return fullCircleToBisectedArc(deg.degrees)
 }
 
 /**
  * Converts an angle from -180(left) to 180(right) degrees to a unit circle angle
  */
-fun halfCircleToUnitCircle(deg: Double): Angle {
+fun bisectedArcToUnitCircle(deg: Double): Angle {
     var rad = unitCircleMirrored(deg.degrees).rad
     if (rad >= TAU) rad -= TAU
     return rad.radians

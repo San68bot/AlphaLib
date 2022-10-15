@@ -8,7 +8,7 @@ import com.san68bot.alphaLib.geometry.Angle.Companion.radians
 import com.san68bot.alphaLib.geometry.Point
 import com.san68bot.alphaLib.geometry.Pose
 import com.san68bot.alphaLib.geometry.TAU
-import com.san68bot.alphaLib.utils.math.angleToEuler
+import com.san68bot.alphaLib.utils.math.fullCircleToBisectedArc
 import com.san68bot.alphaLib.utils.math.epsilonEquals
 import kotlin.math.PI
 import kotlin.math.cos
@@ -18,7 +18,7 @@ object TwoWheelMath {
     private var last_horizonal = 0.0
     private var last_vertical = 0.0
 
-    private var angleBias = 0.0
+    private var angleOffset = 0.0
     private var lastAngle = 0.0
 
     private var xInchesTraveled = 0.0
@@ -33,7 +33,7 @@ object TwoWheelMath {
 
         val angleDelta = (imuAngle - lastAngle).angleWrapRad
 
-        val finalAngle = imuAngle + angleBias
+        val finalAngle = imuAngle + angleOffset
 
         val xPrediction = angleDelta * xTrackWidth
         val yPrediction = angleDelta * yTrackWidth
@@ -41,7 +41,7 @@ object TwoWheelMath {
         val r_x = x_delta - xPrediction
         val r_y = y_delta - yPrediction
 
-        val dtheta = (angleToEuler(angleDelta.radians)).rad
+        val dtheta = (fullCircleToBisectedArc(angleDelta.radians)).rad
         val (sineTerm, cosTerm) = if (dtheta epsilonEquals 0.0) {
             1.0 - dtheta * dtheta / 6.0 to dtheta / 2.0
         } else {
@@ -75,6 +75,6 @@ object TwoWheelMath {
     fun yInchesTraveled() = yInchesTraveled
 
     fun reset(pose: Pose) {
-        angleBias = pose.rad - lastAngle
+        angleOffset = pose.rad - lastAngle
     }
 }
