@@ -62,6 +62,13 @@ data class Angle(var heading: Double, var unit: Unit) {
         }
     )
 
+    operator fun unaryMinus() = when (unit) {
+        Unit.RAD -> (-rad).radians
+        Unit.DEG -> (-deg).degrees
+    }
+
+    operator fun times(scaler: Double) = Angle(heading * scaler, unit)
+
     override fun toString(): String  = "deg: $deg, rad: $rad"
 }
 

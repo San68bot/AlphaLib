@@ -10,7 +10,7 @@ import kotlin.math.atan2
  * Calculates and converts the angle between the two points to a unit circle angle
  */
 fun unitCircleArctan(point1: Point, point2: Point = Point.ORIGIN): Angle {
-    val angle = atan2(point1.y - point2.y, point2.x - point1.x);
+    val angle = atan2(point2.y - point1.y, point2.x - point1.x)
     return (angle + PI).radians
 }
 

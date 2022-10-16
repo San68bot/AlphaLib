@@ -8,6 +8,7 @@ import com.san68bot.alphaLib.geometry.TAU
 import com.san68bot.alphaLib.geometry.toRadians
 import com.san68bot.alphaLib.utils.field.Globals
 import com.san68bot.alphaLib.utils.math.difference
+import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.reflect.KClass
 
@@ -29,7 +30,7 @@ class AGMotor(
     private val type = MotorConfigurationType.getMotorType(motorType.java)
     val encoder by lazy { AGEncoder(motor, type.ticksPerRev, gearRatio) }
 
-    fun setMaxAchievableFraction(): AGMotor {
+    fun maxAchievableFraction(): AGMotor {
         val motorConfigurationType = motor.motorType.clone()
         motorConfigurationType.achieveableMaxRPMFraction = 1.0
         motor.motorType = motorConfigurationType
@@ -61,7 +62,7 @@ class AGMotor(
     var power: Double = 0.0
         set(value) {
             val clippedValue = Range.clip(value, -1.0, 1.0)
-            if (clippedValue != field && (clippedValue == 0.0 || clippedValue.absoluteValue == 1.0 || clippedValue difference field > 0.005)) {
+            if (clippedValue != field && (clippedValue == 0.0 || abs(clippedValue) == 1.0 || clippedValue difference field > 0.005)) {
                 field = value
                 motor.power = value
             }
@@ -103,13 +104,13 @@ class AGMotor(
             }
         }
 
-    val RUN_WITHOUT_ENCODER: AGMotor
+    val run_without_encoder: AGMotor
         get() {
             mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
             return this
         }
 
-    val RUN_USING_ENCODER: AGMotor
+    val run_using_encoder: AGMotor
         get() {
             mode = DcMotor.RunMode.RUN_USING_ENCODER
             return this
