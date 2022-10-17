@@ -7,7 +7,7 @@ class PID(
     private var kP: Double, private var kI: Double, private var kD: Double, private var kStatic: Double,
     private var leeway: Double = 0.0, private var integralThreshold: Double
 ) {
-    private var targetTheta = 0.0
+    private var target = 0.0
 
     private var error = 0.0
     private var prev_error = 0.0
@@ -24,7 +24,7 @@ class PID(
         derivative = 0.0
     }
 
-    fun target(targetTheta: Double): PID { this.targetTheta = targetTheta; return this }
+    fun setTarget(target: Double): PID { this.target = target; return this }
 
     fun error() = error
 
@@ -41,12 +41,33 @@ class PID(
         return this
     }
 
-    fun update(currentTheta: Double): Double {
+    fun update(current: Double): Double {
         val current_time = timer.seconds
         val delta_time = (current_time - prev_time)
         prev_time = current_time
 
-        error = targetTheta - currentTheta
+        error = target - current
+        val delta_error = error - prev_error
+        prev_error = error
+
+        integral += error * delta_time
+        if (abs(error) > integralThreshold) integral = 0.0
+
+        derivative = if (delta_time != 0.0) delta_error / delta_time else 0.0
+
+        return when {
+            error > leeway -> (kP * error) + (kI * integral) + (kD * derivative) + kStatic
+            error < -leeway -> (kP * error) + (kI * integral) + (kD * derivative) - kStatic
+            else -> 0.0
+        }
+    }
+
+    fun updateUsingError(error: Double): Double {
+        val current_time = timer.seconds
+        val delta_time = (current_time - prev_time)
+        prev_time = current_time
+
+        this.error = error
         val delta_error = error - prev_error
         prev_error = error
 
