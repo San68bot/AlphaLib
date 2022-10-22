@@ -11,6 +11,7 @@ class PID(
 
     private var error = 0.0
     private var prev_error = 0.0
+    private var delta_error = 0.0
 
     private val timer = ActionTimer()
     private var prev_time = 0.0
@@ -27,6 +28,7 @@ class PID(
     fun setTarget(target: Double): PID { this.target = target; return this }
 
     fun error() = error
+    fun delta_error() = delta_error
 
     fun setConstants(
         kP: Double, kI: Double, kD: Double, kStatic: Double,
@@ -47,7 +49,7 @@ class PID(
         prev_time = current_time
 
         error = target - current
-        val delta_error = error - prev_error
+        delta_error = error - prev_error
         prev_error = error
 
         integral += error * delta_time
@@ -68,7 +70,7 @@ class PID(
         prev_time = current_time
 
         this.error = error
-        val delta_error = error - prev_error
+        delta_error = error - prev_error
         prev_error = error
 
         integral += error * delta_time
