@@ -35,14 +35,24 @@ open class Mecanum(
      * Settings powers should be done in a child class
      */
     override fun update() {
-        frontLeftPower = drive_yv + drive_omega + drive_xv
-        backLeftPower = drive_yv + drive_omega - drive_xv
-        frontRightPower = drive_yv - drive_omega - drive_xv
-        backRightPower = drive_yv - drive_omega + drive_xv
-        val powers = arrayOf(frontLeftPower, backLeftPower, frontRightPower, backRightPower, 1.0)
+        val x = drive_xv
+        val y = drive_yv
+        val omega = drive_omega
 
-        val max = powers.maxOf { abs(it) }
+        frontLeftPower = y + omega + x
+        backLeftPower = y + omega - x
+        frontRightPower = y - omega - x
+        backRightPower = y - omega + x
 
+        val powers = arrayOf(
+            abs(frontLeftPower),
+            abs(backLeftPower),
+            abs(frontRightPower),
+            abs(backRightPower),
+            1.0
+        )
+
+        val max = powers.max()
         if (max > 1.0) {
             frontLeftPower /= max
             backLeftPower /= max
