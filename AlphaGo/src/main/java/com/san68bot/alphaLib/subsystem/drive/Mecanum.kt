@@ -72,7 +72,6 @@ open class Mecanum(
     }
 
     /**
-     * Test01
      * Getters for each wheel power
      */
     fun frontLeftPower() = frontLeftPower
