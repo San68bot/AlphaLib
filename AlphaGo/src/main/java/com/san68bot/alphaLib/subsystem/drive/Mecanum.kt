@@ -65,10 +65,11 @@ open class Mecanum(
      * Logs each wheel power
      */
     override fun log(): String {
-        return "FL: ${ frontLeftPower round 3 }, " +
-               "BL: ${ backLeftPower round 3 }, " +
-               "FR: ${ frontRightPower round 3 }, " +
-               "BR: ${ backRightPower round 3 }"
+        return "DriveTrain Data:\n" +
+               "FL: ${ frontLeftPower round 3 }, \n" +
+               "BL: ${ backLeftPower round 3 }, \n" +
+               "FR: ${ frontRightPower round 3 }, \n" +
+               "BR: ${ backRightPower round 3 }\n"
     }
 
     /**
@@ -80,7 +81,7 @@ open class Mecanum(
     fun backRightPower() = backRightPower
 
     /**
-     * Access to PID controllers for other classes
+     * Access to PID controllers for Drive controllers
      */
     companion object {
         var xPID = PIDConstants()

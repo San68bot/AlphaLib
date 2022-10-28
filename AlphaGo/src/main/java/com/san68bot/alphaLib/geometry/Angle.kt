@@ -62,6 +62,9 @@ data class Angle(var heading: Double, var unit: Unit) {
         }
     )
 
+    /**
+     * Negates an angle
+     */
     operator fun unaryMinus() = when (unit) {
         Unit.RAD -> (-rad).radians
         Unit.DEG -> (-deg).degrees

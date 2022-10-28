@@ -97,6 +97,7 @@ abstract class AlphaGoInterface(
                 Status.INIT -> {
                     // Run on init loop
                     onInitLoop()
+                    telemetryBuilder.add("Ready to start")
                 }
 
                 Status.PLAY -> {

@@ -9,7 +9,6 @@ interface Robot {
     val ROBOT_LENGTH: Double
 
     fun setup()
-
     fun update()
 
     companion object {

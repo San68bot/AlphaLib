@@ -9,7 +9,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory
 import org.openftc.easyopencv.OpenCvCameraRotation
 import org.openftc.easyopencv.OpenCvPipeline
 
-class UniversalWebcam(config: String, private val orientation: OpenCvCameraRotation = OpenCvCameraRotation.UPRIGHT) {
+class UniversalWebcam(config: String, private val orientation: OpenCvCameraRotation) {
     private val camera: OpenCvCamera
 
     init {
