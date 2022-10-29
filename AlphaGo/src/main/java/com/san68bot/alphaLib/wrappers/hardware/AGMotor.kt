@@ -30,27 +30,46 @@ class AGMotor(
     private val type = MotorConfigurationType.getMotorType(motorType.java)
     val encoder by lazy { AGEncoder(motor, type.ticksPerRev, gearRatio) }
 
-    fun maxAchievableFraction(): AGMotor {
-        val motorConfigurationType = motor.motorType.clone()
-        motorConfigurationType.achieveableMaxRPMFraction = 1.0
-        motor.motorType = motorConfigurationType
-        return this
-    }
+    /**
+     * Encoder Functions
+     */
 
+    //Position & Angle
     fun currentPosition(): Double {
         return encoder.currentPos
+    }
+
+    fun currentRotations(): Double {
+        return encoder.rotations
     }
 
     fun currentAngle(): Angle {
         return encoder.angle
     }
 
+    fun currentUnitCircleAngle(): Angle {
+        return encoder.unitCircleAngle
+    }
+
+    //Reset
     infix fun resetEncoder(newPosition: Double) {
         encoder reset newPosition
     }
 
     infix fun resetEncoder(newAngle: Angle) {
         encoder reset (newAngle.rad / TAU * type.ticksPerRev)
+    }
+
+    /**
+     * Motor Functions
+     */
+
+    //Power
+    fun maxAchievableFraction(): AGMotor {
+        val motorConfigurationType = motor.motorType.clone()
+        motorConfigurationType.achieveableMaxRPMFraction = 1.0
+        motor.motorType = motorConfigurationType
+        return this
     }
 
     val velocity get() = motor.velocity
@@ -68,6 +87,7 @@ class AGMotor(
             }
         }
 
+    //Direction
     val reverse: AGMotor
         get() {
             direction = DcMotorSimple.Direction.REVERSE
@@ -83,6 +103,7 @@ class AGMotor(
             }
         }
 
+    //Zero Power Behavior
     val float: AGMotor
         get() {
             zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
@@ -104,6 +125,7 @@ class AGMotor(
             }
         }
 
+    //In-built Velocity control
     val run_without_encoder: AGMotor
         get() {
             mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER

@@ -6,6 +6,7 @@ import com.san68bot.alphaLib.geometry.Angle
 import com.san68bot.alphaLib.geometry.Angle.Companion.radians
 import com.san68bot.alphaLib.geometry.TAU
 import com.san68bot.alphaLib.utils.field.Globals
+import com.san68bot.alphaLib.utils.math.unitCircleMirrored
 
 class AGEncoder(
     private val encoder: DcMotorEx,
@@ -45,6 +46,12 @@ class AGEncoder(
      */
     val angle: Angle
         get() = (rotations * TAU).radians
+
+    /**
+     * Current angle of the encoder in the unit circle
+     */
+    val unitCircleAngle: Angle
+        get() = unitCircleMirrored(angle)
 
     fun reverse() { multiplier = -1.0 }
 
