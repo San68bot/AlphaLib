@@ -13,6 +13,7 @@ import kotlin.math.PI
 
 class TwoWheelOdometry(
     encoderConfig_VH: ArrayList<String>,
+    v_reverse: Boolean, h_reverse: Boolean,
     wheelDia: Double,
     private val xTrackWidth: Double,
     private val yTrackWidth: Double,
@@ -32,6 +33,11 @@ class TwoWheelOdometry(
         1.0,
         hmap
     )
+
+    init {
+        if(v_reverse) verticalEncoder.reverse()
+        if(h_reverse) horizontalEncoder.reverse()
+    }
 
     private val inchesPerTick = (wheelDia * PI) / 8192.0
 
