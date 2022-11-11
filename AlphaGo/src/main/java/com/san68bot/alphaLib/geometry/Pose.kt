@@ -1,6 +1,7 @@
 package com.san68bot.alphaLib.geometry
 
 import com.san68bot.alphaLib.geometry.Angle.Companion.radians
+import com.san68bot.alphaLib.utils.math.round
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -44,5 +45,5 @@ data class Pose(
     /**
      * Returns a string representation of the object.
      */
-    override fun toString(): String = "x: ${ point.x }, y: ${ point.y }, deg: ${ angle.deg }"
+    override fun toString(): String = "x: ${ point.x round 3 }, y: ${ point.y round 3 }, deg: ${ angle.deg round 3 }"
 }

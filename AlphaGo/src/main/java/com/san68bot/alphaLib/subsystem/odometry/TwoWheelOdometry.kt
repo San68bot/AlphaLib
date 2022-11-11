@@ -14,22 +14,23 @@ import kotlin.math.PI
 class TwoWheelOdometry(
     encoderConfig_VH: ArrayList<String>,
     v_reverse: Boolean, h_reverse: Boolean,
-    wheelDia: Double,
     private val xTrackWidth: Double,
     private val yTrackWidth: Double,
     private val imu: IMU,
     hmap: HardwareMap = Globals.hmap
 ): Localizer {
+    private val encoder_ticks = 8192.0
+
     private val verticalEncoder = AGEncoder(
         encoderConfig_VH[0],
-        8192.0,
+        encoder_ticks,
         1.0,
         hmap
     )
 
     private val horizontalEncoder = AGEncoder(
         encoderConfig_VH[1],
-        8192.0,
+        encoder_ticks,
         1.0,
         hmap
     )
@@ -39,7 +40,7 @@ class TwoWheelOdometry(
         if(h_reverse) horizontalEncoder.reverse()
     }
 
-    private val inchesPerTick = (wheelDia * PI) / 8192.0
+    private val inchesPerTick = (1.889764 * PI) / encoder_ticks
 
     override fun reset(pose: Pose) {
         TwoWheelMath.reset(pose)
@@ -49,7 +50,7 @@ class TwoWheelOdometry(
         TwoWheelMath.update(
             horizontalEncoder.currentPos,
             verticalEncoder.currentPos,
-            imu.firstAngle,
+            -imu.firstAngle,
             inchesPerTick,
             xTrackWidth,
             yTrackWidth

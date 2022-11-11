@@ -26,35 +26,32 @@ object TwoWheelMath {
         horizontalTicks: Double, verticalTicks: Double, imuAngle: Double,
         inchesPerTick: Double, xTrackWidth: Double, yTrackWidth: Double
     ) {
-        val dx = (horizontalTicks - last_horizonal) * inchesPerTick
-        val dy = (verticalTicks - last_vertical) * inchesPerTick
-        val angle_delta = fullCircleToBisectedArc((imuAngle - last_angle).radians)
+        val delta_x = (horizontalTicks - last_horizonal) * inchesPerTick
+        val delta_y = (verticalTicks - last_vertical) * inchesPerTick
+        val delta_angle = -fullCircleToBisectedArc((imuAngle - last_angle).radians)
 
         val final_angle = imuAngle + angleOffset
 
-        val xPrediction = angle_delta.rad * xTrackWidth
-        val yPrediction = angle_delta.rad * yTrackWidth
+        val r_x = delta_x - (delta_angle.rad * xTrackWidth)
+        val r_y = delta_y - (delta_angle.rad * yTrackWidth)
 
-        val rx = dx - xPrediction
-        val ry = dy - yPrediction
-
-        val (sinTerm, cosTerm) = if (angle_delta.rad epsilonEquals 0.0) {
-            1.0 - angle_delta.rad * angle_delta.rad / 6.0 to angle_delta.rad / 2.0
+        val (sin, cos) = if (delta_angle.rad epsilonEquals 0.0) {
+            1.0 - delta_angle.rad * delta_angle.rad / 6.0 to delta_angle.rad / 2.0
         } else {
-            sin(angle_delta.rad) / angle_delta.rad to (1.0 - cos(angle_delta.rad)) / angle_delta.rad
+            sin(delta_angle.rad) / delta_angle.rad to (1.0 - cos(delta_angle.rad)) / delta_angle.rad
         }
 
-        val x_movement = cosTerm * ry + sinTerm * rx
-        val y_movement = sinTerm * ry - cosTerm * rx
+        val movement_x = cos * r_y + sin * r_x
+        val movement_y = sin * r_y - cos * r_x
 
         val finalDelta = Point(
-            y_movement * global_angle_bisectedArc.sin + x_movement * global_angle_bisectedArc.cos,
-            y_movement * global_angle_bisectedArc.cos - x_movement * global_angle_bisectedArc.sin
+            movement_y * global_angle_bisectedArc.sin + movement_x * global_angle_bisectedArc.cos,
+            movement_y * global_angle_bisectedArc.cos - movement_x * global_angle_bisectedArc.sin
         )
         global_pose = Pose(global_point + finalDelta, bisectedArcToUnitCircle(final_angle.radians))
 
-        xInchesTraveled += rx
-        yInchesTraveled += ry
+        xInchesTraveled += r_x
+        yInchesTraveled += r_y
 
         last_horizonal = horizontalTicks
         last_vertical = verticalTicks

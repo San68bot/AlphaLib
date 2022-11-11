@@ -12,6 +12,11 @@ interface Robot {
     fun update()
 
     companion object {
+        fun Localizer.setLocalizer(): Localizer {
+            GlobalPosition.localizer = this
+            return this
+        }
+
         fun setLocalizer(localizer: Localizer) {
             GlobalPosition.localizer = localizer
         }

@@ -12,33 +12,41 @@ import kotlin.math.PI
 
 class ThreeWheelOdometry(
     encoderConfig_LRA: ArrayList<String>,
-    wheelDia: Double,
+    l_reverse: Boolean, r_reverse: Boolean, a_reverse: Boolean,
     private val lateralTrackWidth: Double,
     private val auxTrackWidth: Double,
     hmap: HardwareMap = Globals.hmap
 ): Localizer{
+    private val encoder_ticks = 8192.0
+
     private val leftEncoder = AGEncoder(
         encoderConfig_LRA[0],
-        8192.0,
+        encoder_ticks,
         1.0,
         hmap
     )
 
     private val rightEncoder = AGEncoder(
         encoderConfig_LRA[1],
-        8192.0,
+        encoder_ticks,
         1.0,
         hmap
     )
 
     private val auxEncoder = AGEncoder(
         encoderConfig_LRA[2],
-        8192.0,
+        encoder_ticks,
         1.0,
         hmap
     )
 
-    private val inchesPerTick = (wheelDia * PI) / 8192.0
+    init {
+        if(l_reverse) leftEncoder.reverse()
+        if(r_reverse) rightEncoder.reverse()
+        if(a_reverse) auxEncoder.reverse()
+    }
+
+    private val inchesPerTick = (1.889764 * PI) / encoder_ticks
 
     override fun reset(pose: Pose) {
         ThreeWheelMath.reset(pose)
