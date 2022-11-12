@@ -8,6 +8,7 @@ import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_poin
 import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_x
 import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_y
 import com.san68bot.alphaLib.geometry.*
+import com.san68bot.alphaLib.geometry.Angle.Companion.radians
 import com.san68bot.alphaLib.subsystem.drive.Mecanum.Companion.turnPID
 import com.san68bot.alphaLib.subsystem.drive.Mecanum.Companion.xPID
 import com.san68bot.alphaLib.subsystem.drive.Mecanum.Companion.yPID
@@ -16,6 +17,7 @@ import com.san68bot.alphaLib.utils.field.RunData.ALLIANCE
 import com.san68bot.alphaLib.utils.math.*
 import com.san68bot.alphaLib.wrappers.util.*
 import kotlin.math.abs
+import kotlin.math.atan2
 
 object DriveMotion {
     /**
@@ -70,8 +72,8 @@ object DriveMotion {
         /**
          * Log results
          */
-        logData(Pose(x, y, theta), Pose(xError, yError, angleError.deg))
-        return MovementResults(Pose(xError, yError, angleError.deg))
+        logData(Pose(x, y, theta), Pose(xError, yError, angleError))
+        return MovementResults(Pose(xError, yError, angleError))
     }
 
     /**
@@ -150,7 +152,7 @@ object DriveMotion {
         val pointMove = Point(x, y)
         movementVector(
             pointMove.hypot,
-            pointMove.angle - global_angle_bisectedArc,
+            atan2(pointMove.x, pointMove.y).radians - global_angle_bisectedArc,
             turn
         )
     }

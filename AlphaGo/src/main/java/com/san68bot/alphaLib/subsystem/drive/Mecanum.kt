@@ -31,6 +31,15 @@ open class Mecanum(
     }
 
     /**
+     * For live updating PID constants
+     */
+    fun updatePID(xPID: PIDConstants, yPID: PIDConstants, turnPID: PIDConstants) {
+        Companion.xPID set xPID
+        Companion.yPID set yPID
+        Companion.turnPID set turnPID
+    }
+
+    /**
      * Calculate powers for each wheel
      * Settings powers should be done in a child class
      */

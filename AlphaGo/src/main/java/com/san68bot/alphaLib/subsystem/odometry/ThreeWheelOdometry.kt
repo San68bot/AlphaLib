@@ -48,10 +48,6 @@ class ThreeWheelOdometry(
 
     private val inchesPerTick = (1.889764 * PI) / encoder_ticks
 
-    override fun reset(pose: Pose) {
-        ThreeWheelMath.reset(pose)
-    }
-
     override fun update() {
         ThreeWheelMath.update(
             leftEncoder.currentPos,
@@ -61,13 +57,14 @@ class ThreeWheelOdometry(
             lateralTrackWidth,
             auxTrackWidth
         )
-        Speedometer.update(inchesTravelled())
+
+        Speedometer.update(
+            ThreeWheelMath.xDelta(),
+            ThreeWheelMath.yDelta()
+        )
     }
 
-    override fun inchesTravelled(): Point {
-        return Point(
-            ThreeWheelMath.xInchesTraveled(),
-            ThreeWheelMath.yInchesTraveled()
-        )
+    override fun reset(pose: Pose) {
+        ThreeWheelMath.reset(pose)
     }
 }

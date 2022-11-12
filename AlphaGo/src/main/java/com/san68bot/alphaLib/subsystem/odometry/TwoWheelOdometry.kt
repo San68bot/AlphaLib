@@ -49,17 +49,14 @@ class TwoWheelOdometry(
             verticalEncoder.currentPos * inchesPerTick,
             horizontalEncoder.currentPos * inchesPerTick
         )
-        Speedometer.update(inchesTravelled())
+
+        Speedometer.update(
+            TwoWheelMath.xDelta(),
+            TwoWheelMath.yDelta()
+        )
     }
 
     override fun reset(pose: Pose) {
         TwoWheelMath.reset(pose)
-    }
-
-    override fun inchesTravelled(): Point {
-        return Point(
-            TwoWheelMath.xInchesTraveled(),
-            TwoWheelMath.yInchesTraveled()
-        )
     }
 }

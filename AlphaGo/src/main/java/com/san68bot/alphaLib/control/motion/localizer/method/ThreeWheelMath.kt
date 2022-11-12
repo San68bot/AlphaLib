@@ -19,8 +19,15 @@ object ThreeWheelMath {
     private var angleOffset = 0.0
     private var last_angle = 0.0
 
-    private var xInchesTraveled = 0.0
-    private var yInchesTraveled = 0.0
+    var xInchesTraveled = 0.0
+    var yInchesTraveled = 0.0
+
+    private var r_x = 0.0
+    private var r_y = 0.0
+
+    fun reset(pose: Pose) {
+        angleOffset = pose.rad - last_angle
+    }
 
     fun update(
         leftTicks: Double, rightTicks: Double, auxTicks: Double,
@@ -34,16 +41,16 @@ object ThreeWheelMath {
         last_angle = (((leftTicks * inchesPerTick) - (rightTicks * inchesPerTick)) / lateralTrackWidth)
         val final_angle = last_angle + angleOffset
 
-        val dx = aux_delta - (angle_delta * auxTrackWidth)
-        val dy = (left_delta + right_delta) / 2.0
+        r_x = aux_delta - (angle_delta * auxTrackWidth)
+        r_y = (left_delta + right_delta) / 2.0
 
         val (sinTerm, cosTerm) = if (angle_delta epsilonEquals 0.0) {
             1.0 - angle_delta * angle_delta / 6.0 to angle_delta / 2.0
         } else {
             sin(angle_delta) / angle_delta to (1.0 - cos(angle_delta)) / angle_delta
         }
-        val x_movement = cosTerm * dy + sinTerm * dx
-        val y_movement = sinTerm * dy - cosTerm * dx
+        val x_movement = cosTerm * r_y + sinTerm * r_x
+        val y_movement = sinTerm * r_y - cosTerm * r_x
 
         val finalDelta = Point(
             y_movement * global_angle_bisectedArc.sin + x_movement * global_angle_bisectedArc.cos,
@@ -51,18 +58,14 @@ object ThreeWheelMath {
         )
         global_pose = Pose(global_point + finalDelta, bisectedArcToUnitCircle(final_angle.radians))
 
-        xInchesTraveled += dx
-        yInchesTraveled += dy
+        xInchesTraveled += r_x
+        yInchesTraveled += r_y
 
         last_left = leftTicks
         last_right = rightTicks
         last_aux = auxTicks
     }
 
-    fun xInchesTraveled() = xInchesTraveled
-    fun yInchesTraveled() = yInchesTraveled
-
-    fun reset(pose: Pose) {
-        angleOffset = pose.rad - last_angle
-    }
+    fun xDelta() = r_x
+    fun yDelta() = r_y
 }

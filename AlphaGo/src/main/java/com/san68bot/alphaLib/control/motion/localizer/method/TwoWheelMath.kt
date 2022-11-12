@@ -20,8 +20,11 @@ object TwoWheelMath {
 
     private var angleOffset = 0.0
 
-    private var xInchesTraveled = 0.0
-    private var yInchesTraveled = 0.0
+    var xInchesTraveled = 0.0
+    var yInchesTraveled = 0.0
+
+    private var r_x = 0.0
+    private var r_y = 0.0
 
     fun reset(pose: Pose) {
         angleOffset = unitCircleToBisectedArc(pose.angle).rad - last_imu
@@ -41,8 +44,8 @@ object TwoWheelMath {
         val x_arclength = delta_theta.rad * (horizontal_position.hypot * -horizontal_position.angle.rad.msign)
         val y_arclength = delta_theta.rad * (vertical_position.hypot * -vertical_position.angle.rad.msign)
 
-        val r_x = delta_horizontal - x_arclength
-        val r_y = delta_vertical - y_arclength
+        r_x = delta_horizontal - x_arclength
+        r_y = delta_vertical - y_arclength
 
         val (sin, cos) = if (delta_theta.rad epsilonEquals 0.0) {
             1.0 - delta_theta.rad * delta_theta.rad / 6.0 to delta_theta.rad / 2.0
@@ -58,6 +61,7 @@ object TwoWheelMath {
             transformed_y * global_angle_bisectedArc.sin + transformed_x * global_angle_bisectedArc.cos,
             transformed_y * global_angle_bisectedArc.cos - transformed_x * global_angle_bisectedArc.sin
         )
+
         global_pose = Pose(
             global_point + finalDelta,
             bisectedArcToUnitCircle(transformed_theta.radians)
@@ -71,6 +75,6 @@ object TwoWheelMath {
         last_imu = imu_angle
     }
 
-    fun xInchesTraveled() = xInchesTraveled
-    fun yInchesTraveled() = yInchesTraveled
+    fun xDelta() = r_x
+    fun yDelta() = r_y
 }

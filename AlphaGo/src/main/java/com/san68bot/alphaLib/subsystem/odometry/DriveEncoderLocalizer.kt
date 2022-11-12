@@ -24,23 +24,21 @@ class DriveEncoderLocalizer(
 
     override fun update() {
         driveEncoders.updatePoseEstimate()
+
         DriveEncoderMath.update(
             driveEncoders.poseEstimate
         )
-        Speedometer.update(inchesTravelled())
+
+        Speedometer.update(
+            DriveEncoderMath.xDelta(),
+            DriveEncoderMath.yDelta()
+        )
     }
 
     override fun reset(pose: Pose) {
         driveEncoders.poseEstimate = Pose2d(pose.y, -pose.x, (pose.rad - PI/2.0))
         DriveEncoderMath.reset(
             driveEncoders.poseEstimate
-        )
-    }
-
-    override fun inchesTravelled(): Point {
-        return Point(
-            DriveEncoderMath.xInchesTraveled(),
-            DriveEncoderMath.yInchesTraveled()
         )
     }
 

@@ -1,23 +1,15 @@
 package com.san68bot.alphaLib.control.motion.drive
 
 import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_angle_bisectedArc
-import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_rad
 import com.san68bot.alphaLib.geometry.Angle
 import com.san68bot.alphaLib.geometry.Point
 import com.san68bot.alphaLib.geometry.toDegrees
 
 object Speedometer {
+    /**
+     * Previous time for delta
+     */
     private var prevTime = 0.0
-
-    /**
-     * The X distance traveled within 1 update
-     */
-    private var xTraveledDelta = 0.0
-
-    /**
-     * The Y distance traveled within 1 update
-     */
-    private var yTraveledDelta = 0.0
 
     /**
      * The angular velocity
@@ -42,35 +34,24 @@ object Speedometer {
     /**
      * Calculates kinematics of the robot
      */
-    fun update() {
+    fun update(dx: Double, dy: Double) {
         // Calculate time delta
         val currTime = (System.currentTimeMillis() / 1000.0)
         val dt = currTime - prevTime
         prevTime = currTime
 
         // Calculate speeds in x and y
-        val xSpeed = xTraveledDelta / dt
-        val ySpeed = yTraveledDelta / dt
+        val xSpeed = dx / dt
+        val ySpeed = dy / dt
 
         // Calculate angular velocity
-        omega = (global_rad - lastAngle) / dt
-        lastAngle = global_rad
-
-        // Reset traveled distance for next update
-        xTraveledDelta = 0.0
-        yTraveledDelta = 0.0
+        omega = (global_angle_bisectedArc.rad - lastAngle) / dt
+        lastAngle = global_angle_bisectedArc.rad
 
         // Sets speed
-        speed = pointDelta(xSpeed, ySpeed, global_angle_bisectedArc)
-    }
-
-    /**
-     * Adds the distance traveled to the delta and updates the class
-     */
-    fun update(point: Point) {
-        xTraveledDelta += point.x
-        yTraveledDelta += point.y
-        update()
+        speed = pointDelta(
+            xSpeed, ySpeed, global_angle_bisectedArc
+        )
     }
 
     /**

@@ -37,8 +37,8 @@ object DriveEncoderMath {
         prevTheta = rawPose.heading
     }
 
-    fun xInchesTraveled() = xInchesTraveled
-    fun yInchesTraveled() = yInchesTraveled
+    fun xDelta() = deltaX
+    fun yDelta() = deltaY
 
     fun reset(rawPose: Pose2d) {
         this.rawPose = rawPose
