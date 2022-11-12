@@ -11,51 +11,49 @@ import com.san68bot.alphaLib.wrappers.hardware.AGEncoder
 import com.san68bot.alphaLib.wrappers.imu.IMU
 import kotlin.math.PI
 
+data class TwoWheelConfig(val config: String, val reverse: Boolean, val position: Point)
+
 class TwoWheelOdometry(
-    encoderConfig_VH: ArrayList<String>,
-    v_reverse: Boolean, h_reverse: Boolean,
-    private val xTrackWidth: Double,
-    private val yTrackWidth: Double,
     private val imu: IMU,
-    hmap: HardwareMap = Globals.hmap
+    private val vert_encoder: TwoWheelConfig,
+    private val horiz_encoder: TwoWheelConfig,
+    val hmap: HardwareMap = Globals.hmap
 ): Localizer {
     private val encoder_ticks = 8192.0
+    private val wheel_dia = 1.889764
 
     private val verticalEncoder = AGEncoder(
-        encoderConfig_VH[0],
+        vert_encoder.config,
         encoder_ticks,
-        1.0,
-        hmap
+        hmap = hmap
     )
 
     private val horizontalEncoder = AGEncoder(
-        encoderConfig_VH[1],
+        horiz_encoder.config,
         encoder_ticks,
-        1.0,
-        hmap
+        hmap = hmap
     )
 
     init {
-        if(v_reverse) verticalEncoder.reverse()
-        if(h_reverse) horizontalEncoder.reverse()
+        if(vert_encoder.reverse) verticalEncoder.reverse()
+        if(horiz_encoder.reverse) horizontalEncoder.reverse()
     }
 
-    private val inchesPerTick = (1.889764 * PI) / encoder_ticks
-
-    override fun reset(pose: Pose) {
-        TwoWheelMath.reset(pose)
-    }
+    private val inchesPerTick = (wheel_dia * PI) / encoder_ticks
 
     override fun update() {
         TwoWheelMath.update(
-            horizontalEncoder.currentPos,
-            verticalEncoder.currentPos,
+            vert_encoder.position,
+            horiz_encoder.position,
             -imu.firstAngle,
-            inchesPerTick,
-            xTrackWidth,
-            yTrackWidth
+            verticalEncoder.currentPos * inchesPerTick,
+            horizontalEncoder.currentPos * inchesPerTick
         )
         Speedometer.update(inchesTravelled())
+    }
+
+    override fun reset(pose: Pose) {
+        TwoWheelMath.reset(pose)
     }
 
     override fun inchesTravelled(): Point {

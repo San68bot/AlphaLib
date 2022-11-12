@@ -13,6 +13,9 @@ const val pi = Math.PI
 const val EPSILON = 1e-6
 infix fun Double.epsilonEquals(other: Double) = (this difference other) < EPSILON
 
+val Double.msign: Double
+    get() = if (this < 0) -1.0 else 1.0
+
 fun avg(vararg nums: Double): Double = nums.average()
 fun sum(vararg nums: Double): Double = nums.sum()
 
