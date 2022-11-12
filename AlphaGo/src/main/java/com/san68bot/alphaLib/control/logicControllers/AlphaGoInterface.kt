@@ -129,9 +129,9 @@ abstract class AlphaGoInterface(
 
             // Update telemetry, with some extra data
             telemetryBuilder
-                .add("seconds till end", secondsTillEnd)
-                .add("seconds into mode", secondsIntoMode)
-                .add("loop time", loopTimer.milliseconds)
+                .telemetryAdd("seconds till end", secondsTillEnd)
+                .telemetryAdd("seconds into mode", secondsIntoMode)
+                .telemetryAdd("loop time", loopTimer.milliseconds)
                 .update()
 
             // Reset loop timer
