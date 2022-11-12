@@ -26,6 +26,11 @@ class TelemetryBuilder(private val telemetry: Telemetry) {
         return this
     }
 
+    fun telemetryAdd(key: String?, value: Any?): TelemetryBuilder {
+        telemetry.addData(key, if (value is Number) (value.toDouble() round 3) else value)
+        return this
+    }
+
     fun drawDrivetrain_rr(pose: Pose2d, color: String = "black"): TelemetryBuilder {
         val newPose = Pose2d(pose.y, -pose.x, pose.heading)
         packet.fieldOverlay().setStroke(color).strokeCircle(newPose.x, newPose.y, 9.0)
@@ -62,7 +67,7 @@ class TelemetryBuilder(private val telemetry: Telemetry) {
         )
 
         val robotPose = Pose(x, y, robotTheta - PI/2.0)
-        val (lx, ly) = robotPose.headingVec().scale((18.0/2.0), (18.0/2.0))
+        val (lx, ly) = robotPose.headingVec().scale(9.0, 9.0)
         val x1 = robotPose.x + lx / 2.0
         val y1 = robotPose.y + ly / 2.0
         val x2 = robotPose.x + lx
