@@ -2,6 +2,7 @@ package com.san68bot.alphaLib.control.logicControllers
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.util.ElapsedTime
+import com.san68bot.alphaLib.control.logicControllers.rule.RuleBook
 import com.san68bot.alphaLib.control.motion.drive.DriveMotion
 import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition
 import com.san68bot.alphaLib.control.motion.purepursuit.PurePursuit
@@ -126,6 +127,9 @@ abstract class AlphaGoInterface(
 
             // Update robot
             robot.update()
+
+            // Update RuleBook
+            RuleBook.evaluate()
 
             // Update telemetry, with some extra data
             telemetryBuilder
