@@ -1,4 +1,4 @@
-package com.san68bot.alphaLib.control.logicControllers.rule
+package com.san68bot.alphaLib.control.logicControllers
 
 import java.lang.IllegalStateException
 
