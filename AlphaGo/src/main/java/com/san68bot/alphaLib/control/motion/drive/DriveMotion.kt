@@ -67,7 +67,7 @@ object DriveMotion {
          * Set movement
          */
         fieldCentric(xSpeed, ySpeed, turnSpeed)
-        //maximizeMovement()
+        maximizeMovement()
 
         /**
          * Log results
