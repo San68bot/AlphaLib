@@ -125,9 +125,6 @@ abstract class AlphaGoInterface(
             // Update robot
             robot.update()
 
-            // Update RuleBook
-            RuleBook.evaluate()
-
             // Update telemetry, with some extra data
             telemetryBuilder
                 .telemetryAdd("seconds till end", secondsTillEnd)

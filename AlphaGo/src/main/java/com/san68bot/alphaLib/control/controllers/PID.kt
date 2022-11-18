@@ -31,6 +31,8 @@ class PID(
 
     fun setTarget(target: Double): PID { this.target = target; return this }
 
+    fun target() = target
+
     fun error() = error
     fun delta_error() = delta_error
 
