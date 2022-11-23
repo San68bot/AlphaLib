@@ -122,6 +122,12 @@ abstract class AlphaGoInterface(
                 }
             }
 
+            // Updating anything passed through coreUpdate
+            coreUpdate()
+
+            // Evaluating Rules
+            RuleBook.evaluate()
+
             // Update robot
             robot.update()
 
@@ -180,4 +186,9 @@ abstract class AlphaGoInterface(
      * Called once when the opmode requests a stop
      */
     abstract fun onStop()
+
+    /**
+     * Called every loop for core updates to logic controller
+     */
+    abstract fun coreUpdate()
 }
