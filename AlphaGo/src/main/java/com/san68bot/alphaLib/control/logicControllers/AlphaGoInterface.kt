@@ -125,9 +125,6 @@ abstract class AlphaGoInterface(
             // Updating anything passed through coreUpdate
             coreUpdate()
 
-            // Evaluating Rules
-            RuleBook.evaluate()
-
             // Update robot
             robot.update()
 
