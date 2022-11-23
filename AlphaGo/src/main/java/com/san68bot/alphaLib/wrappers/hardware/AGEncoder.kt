@@ -6,7 +6,8 @@ import com.san68bot.alphaLib.geometry.Angle
 import com.san68bot.alphaLib.geometry.Angle.Companion.radians
 import com.san68bot.alphaLib.geometry.TAU
 import com.san68bot.alphaLib.utils.field.Globals
-import com.san68bot.alphaLib.utils.math.unitCircleMirrored
+import com.san68bot.alphaLib.utils.math.bisectedArcToUnitCircle
+import com.san68bot.alphaLib.utils.math.fullCircleToBisectedArc
 
 class AGEncoder(
     private val encoder: DcMotorEx,
@@ -51,7 +52,7 @@ class AGEncoder(
      * Current angle of the encoder in the unit circle
      */
     val unitCircleAngle: Angle
-        get() = unitCircleMirrored(angle)
+        get() = bisectedArcToUnitCircle(fullCircleToBisectedArc(angle))
 
     fun reverse() { multiplier = -1.0 }
 

@@ -7,7 +7,7 @@ package com.san68bot.alphaLib.control.filters
  * @param value The initial state of the input value.
  */
 class SlewRateLimiter(
-    private val rate: Double,
+    private var rate: Double,
     private var value: Double = 0.0
 ) {
     private var prevTime = System.currentTimeMillis() / 1000.0
@@ -42,5 +42,12 @@ class SlewRateLimiter(
     fun reset(value: Double) {
         this.value = value
         prevTime = (System.currentTimeMillis() / 1000.0)
+    }
+
+    /**
+     * Sets the rate of change of the input value.
+     */
+    fun setRate(rate: Double) {
+        this.rate = rate
     }
 }

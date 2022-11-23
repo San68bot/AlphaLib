@@ -23,7 +23,7 @@ fun AGMotor(
 class AGMotor(
     config: String,
     motorType: KClass<*>,
-    gearRatio: Double = 1.0,
+    val gearRatio: Double = 1.0,
     hmap: HardwareMap = Globals.hmap
 ) {
     val motor by lazy { hmap.get(DcMotorEx::class.java, config) }
@@ -57,7 +57,7 @@ class AGMotor(
     }
 
     infix fun resetEncoder(newAngle: Angle) {
-        encoder reset (newAngle.rad / TAU * type.ticksPerRev)
+        encoder reset (newAngle.rad / TAU * (type.ticksPerRev * gearRatio))
     }
 
     /**
