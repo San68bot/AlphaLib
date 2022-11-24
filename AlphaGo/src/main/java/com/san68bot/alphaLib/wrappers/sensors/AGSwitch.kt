@@ -1,4 +1,4 @@
-package com.san68bot.alphaLib.wrappers.hardware
+package com.san68bot.alphaLib.wrappers.sensors
 
 import com.qualcomm.robotcore.hardware.DigitalChannel
 import com.qualcomm.robotcore.hardware.HardwareMap
