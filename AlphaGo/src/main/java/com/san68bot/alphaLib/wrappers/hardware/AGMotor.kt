@@ -2,14 +2,12 @@ package com.san68bot.alphaLib.wrappers.hardware
 
 import com.qualcomm.robotcore.hardware.*
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType
-import com.qualcomm.robotcore.util.Range
 import com.san68bot.alphaLib.geometry.Angle
 import com.san68bot.alphaLib.geometry.TAU
-import com.san68bot.alphaLib.geometry.toRadians
 import com.san68bot.alphaLib.utils.field.Globals
+import com.san68bot.alphaLib.utils.math.clamp
 import com.san68bot.alphaLib.utils.math.difference
 import kotlin.math.abs
-import kotlin.math.absoluteValue
 import kotlin.reflect.KClass
 
 fun AGMotor(
@@ -80,7 +78,7 @@ class AGMotor(
 
     var power: Double = 0.0
         set(value) {
-            val clippedValue = Range.clip(value, -1.0, 1.0)
+            val clippedValue = clamp(value, 1.0)
             if (clippedValue != field && (clippedValue == 0.0 || abs(clippedValue) == 1.0 || clippedValue difference field > 0.005)) {
                 field = value
                 motor.power = value
