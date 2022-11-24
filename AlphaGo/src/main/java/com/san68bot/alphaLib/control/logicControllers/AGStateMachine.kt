@@ -6,8 +6,9 @@ import com.san68bot.alphaLib.wrappers.util.ActionTimer
 /**
  * Robust State Machine Builder creates with Kotlin DSLs
  */
-class AGStateMachine(mainBlock: AGStateMachine.() -> Unit) {
+class AGStateMachine(
     mainBlock: AGStateMachine.() -> Unit
+) {
     /**
      * List of all states
      */
