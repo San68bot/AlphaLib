@@ -7,6 +7,7 @@ import com.san68bot.alphaLib.wrappers.util.ActionTimer
  * Robust State Machine Builder creates with Kotlin DSLs
  */
 class AGStateMachine(mainBlock: AGStateMachine.() -> Unit) {
+    mainBlock: AGStateMachine.() -> Unit
     /**
      * List of all states
      */
@@ -20,17 +21,17 @@ class AGStateMachine(mainBlock: AGStateMachine.() -> Unit) {
     /**
      * Name of state currently active
      */
-    val runningState get() = states[currentState].name
+    private val runningState get() = states[currentState]
 
     /**
      * The last state of the state machine
      */
-    private val lastState get() = states.last()
+    private lateinit var lastState: AGState
 
     /**
      * Variable to check if all states have been completed
      */
-    private var allStatesCompleted = false
+    var allStatesCompleted = false
 
     /**
      * State timer, resets on state change
@@ -71,6 +72,7 @@ class AGStateMachine(mainBlock: AGStateMachine.() -> Unit) {
             throw IllegalArgumentException("State with name $name already exists")
         val myState = AGState(name, block)
         states.add(myState)
+        lastState = myState
         block(myState)
     }
 
@@ -101,27 +103,18 @@ class AGStateMachine(mainBlock: AGStateMachine.() -> Unit) {
      */
     fun run(): Boolean {
         if (allStatesCompleted) return true
-        states.forEach {
-            if (it == states[currentState]) {
-                oneTimes.first().once {
-                    resetTimer()
-                    states[currentState].enterAction?.invoke()
+        runningState.apply {
+            oneTimes[0].once {
+                resetTimer()
+                enterAction?.invoke()
+            }
+            loopAction?.invoke()!!.takeIf { bool -> bool }?.let {
+                oneTimes[1].once {
+                    exitAction?.invoke()
+                    isCompleted = true
                 }
-                val exit = states[currentState].loopAction?.invoke()!!
-                when {
-                    exit && states[currentState].exitAction == null -> {
-                        states[currentState].isCompleted = true
-                        nextState()
-                    }
-
-                    exit && states[currentState].exitAction != null -> {
-                        oneTimes.last().once {
-                            states[currentState].exitAction?.invoke()
-                            states[currentState].isCompleted = true
-                        }
-                        if (!allStatesCompleted) allStatesCompleted = (states[currentState] == lastState) && (!oneTimes.last().isActive())
-                    }
-                }
+                allStatesCompleted = (this == lastState) && (!oneTimes[1].isActive())
+                nextState()
             }
         }
         return allStatesCompleted
