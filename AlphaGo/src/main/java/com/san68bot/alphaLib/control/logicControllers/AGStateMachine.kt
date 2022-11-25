@@ -66,6 +66,23 @@ class AGStateMachine(
     }
 
     /**
+     * Resets all State Machine variables for re-run
+     */
+    fun refresh() {
+        currentState = 0
+        allStatesCompleted = false
+
+        states.forEach {
+            it.isCompleted = false
+        }
+
+        oneTimes.forEach { it.reset() }
+        captureTimeOneTime.reset()
+        capturedTime = 0.0
+        stateTimer.reset()
+    }
+
+    /**
      * Creates a new state
      */
     fun state(name: String, block: AGState.() -> Unit) {
