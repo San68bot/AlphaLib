@@ -31,5 +31,7 @@ infix fun Double.round(decimals: Int): Double {
 
 fun Double.notNaN() = !this.isNaN()
 
-fun clamp(c: Double, x: Double): Double =
-    if (c < -x) -x else if (c > x) x else c
+fun clamp(c: Double, x: Double): Double = clamp(c, -x, x)
+
+fun clamp(c: Double, min: Double, max: Double): Double =
+    if (c < min) min else if (c > max) max else c
