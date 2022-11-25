@@ -112,7 +112,6 @@ class AGStateMachine(
             loopAction?.invoke()!!.takeIf { bool -> bool }?.let {
                 oneTimes[1].once {
                     exitAction?.invoke()
-                    isCompleted = true
                 }
                 allStatesCompleted = (this == lastState) && (!oneTimes[1].isActive())
                 nextState()
@@ -130,7 +129,7 @@ class AGStateMachine(
         resetTransition(runCustomTransition)
         val nextState = states.find { it.name == name }
             ?: throw IllegalArgumentException("State with name $name does not exist")
-        currentState = states.indexOf(nextState)
+        currentState = states.indexOf(nextState) - 1
         resetTimer()
     }
 
@@ -142,7 +141,6 @@ class AGStateMachine(
         resetTransition(runCustomTransition)
         if (currentState == states.lastIndex) {
             allStatesCompleted = true
-            states[currentState].isCompleted = true
         } else {
             currentState++
         }
@@ -229,7 +227,6 @@ class AGStateMachine(
         var name: String, var block: AGState.() -> Unit,
         var enterAction: (() -> Unit)? = null,
         var loopAction: (() -> Boolean)? = { true },
-        var exitAction: (() -> Unit)? = null,
-        var isCompleted: Boolean = false
+        var exitAction: (() -> Unit)? = null
     )
 }

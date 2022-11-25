@@ -110,7 +110,7 @@ class AGSequenceBuilder(
                 oneTimes[1].once {
                     exitAction?.invoke()
                 }
-                nextSequence()
+                if (this != lastSequence) nextSequence()
             }
         }
     }
