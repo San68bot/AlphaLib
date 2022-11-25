@@ -7,7 +7,7 @@ import com.san68bot.alphaLib.wrappers.util.ActionTimer
  * Robust State Machine Builder creates with Kotlin DSLs
  */
 class AGStateMachine(
-    private val mainBlock: AGStateMachine.() -> Unit
+    mainBlock: AGStateMachine.() -> Unit
 ) {
     /**
      * List of all states
@@ -20,7 +20,7 @@ class AGStateMachine(
     private var currentState = 0
 
     /**
-     * Name of state currently active
+     * State currently active
      */
     private val runningState get() = states[currentState]
 
@@ -58,26 +58,10 @@ class AGStateMachine(
      * Resets all variables to default and runs the main block
      */
     init {
+        states.clear()
         oneTimes.forEach { it.reset() }
         captureTimeOneTime.reset()
-        states.clear()
         stateTimer.reset()
-        mainBlock()
-    }
-
-    /**
-     * Resets all State Machine variables for re-run
-     */
-    fun refresh() {
-        currentState = 0
-        allStatesCompleted = false
-
-        oneTimes.forEach { it.reset() }
-        captureTimeOneTime.reset()
-        states.clear()
-        transition = {}
-        stateTimer.reset()
-
         mainBlock()
     }
 
