@@ -110,6 +110,13 @@ object DriveMotion {
     }
 
     /**
+     * Resets the motion profile
+     */
+    fun resetMotionProfile() {
+        mpOneTime.reset()
+    }
+
+    /**
      * Motion profile implementation of goToPose
      */
     fun goToPose_mp(x: Double, y: Double, theta: Angle): MovementResults {
