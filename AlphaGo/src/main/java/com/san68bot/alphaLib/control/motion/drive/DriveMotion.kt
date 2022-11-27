@@ -167,7 +167,7 @@ object DriveMotion {
      * Must be a unit cirlce angle
      */
     fun Pose.goToPose_mp(): MovementResults {
-        return goToPose(this.x, this.y, this.angle)
+        return goToPose_mp(this.x, this.y, this.angle)
     }
 
     /**
