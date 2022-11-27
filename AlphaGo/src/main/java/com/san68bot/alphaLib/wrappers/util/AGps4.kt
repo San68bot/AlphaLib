@@ -1,15 +1,16 @@
 package com.san68bot.alphaLib.wrappers.util
 
 import com.qualcomm.robotcore.hardware.*
+import com.san68bot.alphaLib.control.filters.SlewRateLimiter
 import com.san68bot.alphaLib.geometry.Point
 
-class AGps4(private val gamepad: Gamepad) {
+class AGps4(private val gamepad: Gamepad, private val leftLimit: Double? = null, private val rightLimit: Double? = null) {
     init {
         PS4Master.add(this)
     }
 
-    val leftStick = ps4Joystick ({ pad -> pad.left_stick_x.toDouble() }, { pad -> pad.left_stick_y.toDouble() })
-    val rightStick = ps4Joystick ({ pad -> pad.right_stick_x.toDouble() }, { pad -> pad.right_stick_y.toDouble() })
+    val leftStick = ps4Joystick ({ pad -> pad.left_stick_x.toDouble() }, { pad -> pad.left_stick_y.toDouble() }, leftLimit)
+    val rightStick = ps4Joystick ({ pad -> pad.right_stick_x.toDouble() }, { pad -> pad.right_stick_y.toDouble() }, rightLimit)
 
     val leftStickAngle = Point(leftStick.x, -leftStick.y).angleTo_UnitCircle(Point.ORIGIN)
     val rightStickAngle = Point(rightStick.x, -rightStick.y).angleTo_UnitCircle(Point.ORIGIN)
@@ -94,15 +95,22 @@ class ps4Button(private val getCurrentState: (gamePad: Gamepad) -> Boolean) : PS
     }
 }
 
-class ps4Joystick(private val xInput: (Gamepad) -> Double, private val yInput: (Gamepad) -> Double) : PS4part {
+class ps4Joystick(
+    private val xInput: (Gamepad) -> Double,
+    private val yInput: (Gamepad) -> Double,
+    rateLimit: Double? = null
+) : PS4part {
     var x: Double = 0.0
         private set
     var y: Double = 0.0
         private set
 
+    private val xLimiter: SlewRateLimiter? = if (rateLimit != null) SlewRateLimiter(rateLimit) else null
+    private val yLimiter: SlewRateLimiter? = if (rateLimit != null) SlewRateLimiter(rateLimit) else null
+
     override fun update(gamePad: Gamepad) {
-        x = xInput(gamePad)
-        y = -yInput(gamePad)
+        x = xLimiter?.calculate(xInput(gamePad)) ?: xInput(gamePad)
+        y = yLimiter?.calculate(-yInput(gamePad)) ?: -yInput(gamePad)
     }
 }
 
