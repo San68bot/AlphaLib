@@ -11,7 +11,9 @@ import kotlin.math.abs
 open class Mecanum(
     xPID: PIDConstants,
     yPID: PIDConstants,
-    turnPID: PIDConstants
+    turnPID: PIDConstants,
+    max_velo: Double,
+    max_accel: Double
 ): Subsystem {
     /**
      * Powers for each wheel
@@ -28,6 +30,8 @@ open class Mecanum(
         Companion.xPID set xPID
         Companion.yPID set yPID
         Companion.turnPID set turnPID
+        Companion.max_velo = max_velo
+        Companion.max_accel = max_accel
     }
 
     /**
@@ -96,5 +100,7 @@ open class Mecanum(
         var xPID = PIDConstants()
         var yPID = PIDConstants()
         var turnPID = PIDConstants()
+        var max_velo = 0.0
+        var max_accel = 0.0
     }
 }

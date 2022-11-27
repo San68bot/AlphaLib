@@ -1,5 +1,6 @@
 package com.san68bot.alphaLib.control.motion.drive
 
+import com.san68bot.alphaLib.control.filters.MedianFilter
 import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_angle_bisectedArc
 import com.san68bot.alphaLib.geometry.Angle
 import com.san68bot.alphaLib.geometry.Point
@@ -32,6 +33,12 @@ object Speedometer {
         private set
 
     /**
+     * X and Y median filters to redeuce speed noise
+     */
+    private val xFilter = MedianFilter(7)
+    private val yFilter = MedianFilter(7)
+
+    /**
      * Calculates kinematics of the robot
      */
     fun update(dx: Double, dy: Double) {
@@ -41,8 +48,8 @@ object Speedometer {
         prevTime = currTime
 
         // Calculate speeds in x and y
-        val xSpeed = dx / dt
-        val ySpeed = dy / dt
+        val xSpeed = xFilter.push(dx / dt).median()
+        val ySpeed = yFilter.push(dy / dt).median()
 
         // Calculate angular velocity
         omega = (global_angle_bisectedArc.rad - lastAngle) / dt

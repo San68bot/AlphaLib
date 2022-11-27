@@ -1,5 +1,8 @@
 package com.san68bot.alphaLib.control.motion.drive
 
+import com.acmerobotics.roadrunner.profile.MotionProfile
+import com.acmerobotics.roadrunner.profile.MotionProfileGenerator
+import com.acmerobotics.roadrunner.profile.MotionState
 import com.san68bot.alphaLib.control.motion.drive.Speedometer.degPerSec
 import com.san68bot.alphaLib.control.motion.drive.Speedometer.speed
 import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_angle
@@ -9,9 +12,11 @@ import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_x
 import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_y
 import com.san68bot.alphaLib.geometry.*
 import com.san68bot.alphaLib.geometry.Angle.Companion.radians
+import com.san68bot.alphaLib.subsystem.drive.Mecanum
 import com.san68bot.alphaLib.subsystem.drive.Mecanum.Companion.turnPID
 import com.san68bot.alphaLib.subsystem.drive.Mecanum.Companion.xPID
 import com.san68bot.alphaLib.subsystem.drive.Mecanum.Companion.yPID
+import com.san68bot.alphaLib.utils.OneTime
 import com.san68bot.alphaLib.utils.field.Globals.telemetryBuilder
 import com.san68bot.alphaLib.utils.field.RunData.ALLIANCE
 import com.san68bot.alphaLib.utils.math.*
@@ -34,6 +39,26 @@ object DriveMotion {
      * Angular velocity
      */
     var drive_omega = 0.0
+
+    /**
+     * X motion profile
+     */
+    private var x_mp: MotionProfile? = null
+
+    /**
+     * Y motion profile
+     */
+    private var y_mp: MotionProfile? = null
+
+    /**
+     * Motion profile one time to set the motion profile
+     */
+    private val mpOneTime = OneTime()
+
+    /**
+     * Motion profile timer
+     */
+    private val mpTimer = ActionTimer()
 
     /**
      * Stops movement in all axis
@@ -81,6 +106,60 @@ object DriveMotion {
      * Must be a unit cirlce angle
      */
     fun Pose.goToPose(): MovementResults {
+        return goToPose(this.x, this.y, this.angle)
+    }
+
+    /**
+     * Motion profile implementation of goToPose
+     */
+    fun goToPose_mp(x: Double, y: Double, theta: Angle): MovementResults {
+        mpOneTime.once {
+            x_mp = MotionProfileGenerator.generateSimpleMotionProfile(
+                MotionState(global_x, 0.0, 0.0), MotionState(x, 0.0, 0.0), Mecanum.max_velo, Mecanum.max_accel
+            )
+            y_mp = MotionProfileGenerator.generateSimpleMotionProfile(
+                MotionState(global_y, 0.0, 0.0), MotionState(y, 0.0, 0.0), Mecanum.max_velo, Mecanum.max_accel
+            )
+            mpTimer.reset()
+        }
+
+        /**
+         * Motion Profile target positions
+         */
+        val mpXTarget = x_mp!![mpTimer.seconds].x
+        val mpYTarget = y_mp!![mpTimer.seconds].x
+
+        /**
+         * Pose errors
+         */
+        val xError = (mpXTarget - global_x)
+        val yError = (mpYTarget - global_y)
+        val angleError = fullCircleToBisectedArc(theta - global_angle)
+
+        /**
+         * Pose speeds using PD controller calculations and robot speed
+         */
+        val xSpeed = xError * xPID.kP - speed.x * xPID.kD
+        val ySpeed = yError * yPID.kP - speed.y * yPID.kD
+        val turnSpeed = angleError.deg * turnPID.kP - degPerSec * turnPID.kD
+
+        /**
+         * Set movement
+         */
+        fieldCentric(xSpeed, ySpeed, turnSpeed)
+
+        /**
+         * Log results
+         */
+        logData(Pose(mpXTarget, mpYTarget, theta), Pose(xError, yError, angleError))
+        return MovementResults(Pose(x - global_x, y - global_y, angleError))
+    }
+
+    /**
+     * Pose wrapper implementation of goToPose_mp
+     * Must be a unit cirlce angle
+     */
+    fun Pose.goToPose_mp(): MovementResults {
         return goToPose(this.x, this.y, this.angle)
     }
 
@@ -175,9 +254,16 @@ object DriveMotion {
         if (abs(drive_xv) + abs(drive_yv) > 1.0) {
             val total = abs(drive_xv) + abs(drive_yv)
             if (total != 0.0) {
-                drive_xv *= (1.0/total)
-                drive_yv *= (1.0/total)
+                scaleMovement(1.0/total)
             }
         }
+    }
+
+    /**
+     * Scales the robot's x and y movement
+     */
+    private fun scaleMovement(scaler: Double) {
+        drive_xv *= scaler
+        drive_yv *= scaler
     }
 }

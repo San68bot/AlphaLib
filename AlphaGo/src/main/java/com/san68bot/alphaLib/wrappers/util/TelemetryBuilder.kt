@@ -9,7 +9,11 @@ import com.san68bot.alphaLib.utils.math.round
 import org.firstinspires.ftc.robotcore.external.*
 import kotlin.math.*
 
-class TelemetryBuilder(private val telemetry: Telemetry) {
+class TelemetryBuilder(
+    private val telemetry: Telemetry,
+    robotWidth : Double = agInterface.robot.ROBOT_WIDTH,
+    robotLength : Double = agInterface.robot.ROBOT_LENGTH
+) {
     private var packet = TelemetryPacket()
     var ftcDashboard: FtcDashboard = FtcDashboard.getInstance()
         private set
@@ -47,8 +51,8 @@ class TelemetryBuilder(private val telemetry: Telemetry) {
         return drawDrivetrain(pose.x, pose.y, pose.rad, primaryColor, secondaryColor)
     }
 
-    private val w = (agInterface.robot.ROBOT_WIDTH/2.0) * sqrt(2.0)
-    private val l = (agInterface.robot.ROBOT_LENGTH/2.0) * sqrt(2.0)
+    private val w = (robotWidth/2.0) * sqrt(2.0)
+    private val l = (robotLength/2.0) * sqrt(2.0)
     fun drawDrivetrain(robotX: Double, robotY: Double, robotTheta: Double, primaryColor: String? = "black", secondaryColor: String?): TelemetryBuilder {
         val x = robotY - 72.0
         val y = 72.0 - robotX
