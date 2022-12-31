@@ -121,6 +121,21 @@ class AGStateMachine(
     }
 
     /**
+     * Resets the state machine for a new run
+     */
+    fun refresh() {
+        allStatesCompleted = false
+
+        oneTimes.forEach { it.reset() }
+        captureTimeOneTime.reset()
+
+        currentState = 0
+
+        capturedTime = 0.0
+        resetTimer()
+    }
+
+    /**
      * Goes to the next state
      * @param name Name of the state to go to
      * @param runCustomTransition Whether to run the custom transition
