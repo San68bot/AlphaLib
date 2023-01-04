@@ -129,7 +129,7 @@ class AGStateMachine(
         oneTimes.forEach { it.reset() }
         captureTimeOneTime.reset()
 
-        currentState = 0
+        currentState = -1
 
         capturedTime = 0.0
         resetTimer()
