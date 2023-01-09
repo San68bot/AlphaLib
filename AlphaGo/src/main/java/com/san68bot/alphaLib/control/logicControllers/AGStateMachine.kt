@@ -6,9 +6,7 @@ import com.san68bot.alphaLib.wrappers.util.ActionTimer
 /**
  * Robust State Machine Builder creates with Kotlin DSLs
  */
-class AGStateMachine(
-    mainBlock: AGStateMachine.() -> Unit
-) {
+class AGStateMachine(mainBlock: AGStateMachine.() -> Unit) {
     /**
      * List of all states
      */
@@ -27,12 +25,27 @@ class AGStateMachine(
     /**
      * The last state of the state machine
      */
-    private lateinit var lastState: AGState
+    private val lastState get() = states.last()
+
+    /**
+     * Enter one time
+     */
+    private val enterOneTime = OneTime()
+
+    /**
+     * Exit one time
+     */
+    private val exitOneTime = OneTime()
+
+    /**
+     * Runs block between state changes
+     */
+    private var transition: () -> Unit = {}
 
     /**
      * Variable to check if all states have been completed
      */
-    var allStatesCompleted = false
+    var completed = false
 
     /**
      * State timer, resets on state change
@@ -50,19 +63,17 @@ class AGStateMachine(
     private var capturedTime = 0.0
 
     /**
-     * List of one time actions
+     * Retrieves the time in seconds that the state has been running
      */
-    private val oneTimes = arrayListOf(OneTime(), OneTime())
+    val secondsInState get() = stateTimer.seconds
 
     /**
      * Resets all variables to default and runs the main block
      */
     init {
+        reset()
         states.clear()
-        oneTimes.forEach { it.reset() }
-        captureTimeOneTime.reset()
-        stateTimer.reset()
-        mainBlock()
+        mainBlock.invoke(this)
     }
 
     /**
@@ -73,7 +84,6 @@ class AGStateMachine(
             throw IllegalArgumentException("State with name $name already exists")
         val myState = AGState(name, block)
         states.add(myState)
-        lastState = myState
         block(myState)
     }
 
@@ -103,95 +113,51 @@ class AGStateMachine(
      * @return True if all states have been completed
      */
     fun run(): Boolean {
-        if (allStatesCompleted) return true
+        if (completed) return true
         runningState.apply {
-            oneTimes[0].once {
+            enterOneTime.once {
                 resetTimer()
                 enterAction?.invoke()
             }
-            loopAction?.invoke()!!.takeIf { bool -> bool }?.let {
-                oneTimes[1].once {
-                    exitAction?.invoke()
-                }
-                allStatesCompleted = (this == lastState) && (!oneTimes[1].isActive())
-                nextState()
+            if (loopAction.invoke()) {
+                exitOneTime.once { exitAction?.invoke() }
+                if (this == runningState) nextState()
+                completed = (this == lastState && this == runningState)
             }
         }
-        return allStatesCompleted
-    }
-
-    /**
-     * Resets the state machine for a new run
-     */
-    fun refresh() {
-        allStatesCompleted = false
-
-        oneTimes.forEach { it.reset() }
-        captureTimeOneTime.reset()
-
-        currentState = 0
-
-        capturedTime = 0.0
-        resetTimer()
+        return completed
     }
 
     /**
      * Goes to the next state
      * @param name Name of the state to go to
-     * @param runCustomTransition Whether to run the custom transition
+     * @param runTransition Whether to run the custom transition
      */
-    fun nextState(name: String, runCustomTransition: Boolean = true) {
-        resetTransition(runCustomTransition)
-        val nextState = states.find { it.name == name }
-            ?: throw IllegalArgumentException("State with name $name does not exist")
-        currentState = states.indexOf(nextState) - 1
-        resetTimer()
-    }
-
-    /**
-     * Goes to the next state, with option to run custom transition
-     * @param runCustomTransition Whether to run the custom transition
-     */
-    fun nextState(runCustomTransition: Boolean = true) {
-        resetTransition(runCustomTransition)
-        if (currentState == states.lastIndex) {
-            allStatesCompleted = true
-        } else {
-            currentState++
+    fun nextState(name: String? = null, runTransition: Boolean = true) {
+        when(name) {
+            null -> {
+                if (currentState == states.lastIndex) {
+                    completed = true
+                    return
+                } else {
+                    currentState++
+                }
+            }
+            else -> {
+                currentState = states.indexOfFirst { it.name == name }.takeIf { it != -1 }
+                    ?: throw IllegalArgumentException("State with name $name does not exist")
+            }
         }
-        resetTimer()
+        if (runTransition) transition.invoke()
+        reset()
     }
 
     /**
      * Custom transition that can be run each time state changes
      */
-    private var transition: (() -> Unit) = {}
     infix fun setTransitions(block: () -> Unit): AGStateMachine {
         transition = block
         return this
-    }
-
-    /**
-     * Custom transition that can be run each time state changes
-     */
-    private fun resetTransition(runCustomTransition: Boolean = true) {
-        if (runCustomTransition) transition.invoke()
-        oneTimes.forEach { it.reset() }
-        capturedTime = 0.0
-        captureTimeOneTime.reset()
-        resetTimer()
-    }
-
-    /**
-     * Retrieves the time in seconds that the state has been running
-     */
-    val secondsInState get() = stateTimer.seconds
-
-    /**
-     * Resets the state timer
-     */
-    private fun resetTimer() {
-        stateTimer.reset()
     }
 
     /**
@@ -199,9 +165,7 @@ class AGStateMachine(
      * @param time Time in seconds
      * @return True if time has been reached
      */
-    infix fun Any.checkTime(time: Double): Boolean {
-        return secondsInState >= time
-    }
+    infix fun checkTime(time: Double): Boolean = secondsInState >= time
 
     /**
      * Runs a block of code after a certain time
@@ -211,7 +175,7 @@ class AGStateMachine(
      */
     fun runAfterTime(time: Double, block: () -> Unit = {}): Boolean {
         val result = checkTime(time)
-        if (result) block()
+        if (result) block.invoke()
         return result
     }
 
@@ -236,12 +200,42 @@ class AGStateMachine(
     }
 
     /**
+     * Resets the state machine for a new run
+     */
+    fun refresh() {
+        completed = false
+        currentState = 0
+        transition.invoke()
+        reset()
+    }
+
+    /**
+     * Resets state machine constants
+     */
+    fun reset() {
+        capturedTime = 0.0
+        listOf(
+            captureTimeOneTime,
+            enterOneTime,
+            exitOneTime
+        ).forEach { it.reset() }
+        resetTimer()
+    }
+
+    /**
+     * Resets the state timer
+     */
+    private fun resetTimer() {
+        stateTimer.reset()
+    }
+
+    /**
      * Data class that defines properties of a state
      */
     data class AGState (
         var name: String, var block: AGState.() -> Unit,
         var enterAction: (() -> Unit)? = null,
-        var loopAction: (() -> Boolean)? = { true },
+        var loopAction: () -> Boolean = { true },
         var exitAction: (() -> Unit)? = null
     )
 }
