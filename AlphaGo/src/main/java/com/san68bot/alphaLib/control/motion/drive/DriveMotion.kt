@@ -69,6 +69,14 @@ object DriveMotion {
         drive_omega = 0.0
     }
 
+    fun objectReset() {
+        stop()
+        x_mp = null
+        y_mp = null
+        mpOneTime.reset()
+        mpTimer.reset()
+    }
+
     /**
      * GoToPose implementation that uses PID to move to a specific point
      * Must be a unit cirlce angle

@@ -26,6 +26,17 @@ object TwoWheelMath {
     private var r_x = 0.0
     private var r_y = 0.0
 
+    fun objectReset() {
+        last_vertical = 0.0
+        last_horizontal = 0.0
+        last_imu = 0.0
+        angleOffset = 0.0
+        xInchesTraveled = 0.0
+        yInchesTraveled = 0.0
+        r_x = 0.0
+        r_y = 0.0
+    }
+
     fun reset(pose: Pose) {
         angleOffset = unitCircleToBisectedArc(pose.angle).rad - last_imu
     }

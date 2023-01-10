@@ -38,6 +38,13 @@ object Speedometer {
     private val xFilter = MedianFilter(7)
     private val yFilter = MedianFilter(7)
 
+    fun objectReset() {
+        prevTime = 0.0
+        lastAngle = 0.0
+        omega = 0.0
+        speed = Point.ORIGIN
+    }
+
     /**
      * Calculates kinematics of the robot
      */

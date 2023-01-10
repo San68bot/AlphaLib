@@ -69,6 +69,7 @@ abstract class AlphaGoInterface(
         driver = AGps4(gamepad1)
         operator = AGps4(gamepad2)
 
+        if (autonomous) Globals.resetObjects()
         // Run pre robot setup
         preRobotSetup()
 

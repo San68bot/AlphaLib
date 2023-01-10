@@ -24,11 +24,10 @@ class IMU(private val frequencyMS: Double = 0.0, hmap: HardwareMap = Globals.hma
     private var angularVelocity: AngularVelocity = AngularVelocity()
 
     fun update() {
-        if(frequencyTimer.milliseconds >= frequencyMS) {
-            angularOrientation = imu.angularOrientation
-            angularVelocity = imu.angularVelocity
-            frequencyTimer.reset()
-        }
+        if (!frequencyMS.isNaN() && frequencyTimer.milliseconds < frequencyMS) return
+        angularOrientation = imu.angularOrientation
+        angularVelocity = imu.angularVelocity
+        frequencyTimer.reset()
     }
 
     val firstAngle get() = angularOrientation.firstAngle.toDouble()
