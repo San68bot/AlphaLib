@@ -9,8 +9,13 @@ import org.openftc.easyopencv.OpenCvCameraFactory
 import org.openftc.easyopencv.OpenCvCameraRotation
 import org.openftc.easyopencv.OpenCvPipeline
 
-class UniversalWebcam(config: String, private val orientation: OpenCvCameraRotation) {
-    private val camera: OpenCvCamera
+class UniversalWebcam(
+    config: String,
+    private val orientation: OpenCvCameraRotation,
+    private val width: Int, private val height: Int
+) {
+    val camera: OpenCvCamera
+    lateinit var pipeline: OpenCvPipeline
 
     init {
         val cameraMonitorViewId = hmap.appContext.resources.getIdentifier(
@@ -22,14 +27,14 @@ class UniversalWebcam(config: String, private val orientation: OpenCvCameraRotat
     }
 
     infix fun set(pipeline: OpenCvPipeline): UniversalWebcam {
+        this.pipeline = pipeline
         camera.setPipeline(pipeline)
-        start()
         return this
     }
 
     private fun start(): UniversalWebcam {
         camera.openCameraDeviceAsync(object : AsyncCameraOpenListener {
-            override fun onOpened() { camera.startStreaming(320, 240, orientation) }
+            override fun onOpened() { camera.startStreaming(width, height, orientation) }
             override fun onError(errorCode: Int) {}
         })
         telemetryBuilder.ftcDashboard.startCameraStream(camera, 30.0)
