@@ -1,5 +1,7 @@
 package com.san68bot.alphaLib.wrappers.evoc
 
+import com.qualcomm.robotcore.hardware.HardwareMap
+import com.san68bot.alphaLib.utils.field.Globals
 import com.san68bot.alphaLib.utils.field.Globals.hmap
 import com.san68bot.alphaLib.utils.field.Globals.telemetryBuilder
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
@@ -12,27 +14,25 @@ import org.openftc.easyopencv.OpenCvPipeline
 class UniversalWebcam(
     config: String,
     private val orientation: OpenCvCameraRotation,
-    private val width: Int, private val height: Int
+    private val width: Int, private val height: Int,
+    hmap: HardwareMap = Globals.hmap
 ) {
     val camera: OpenCvCamera
-    lateinit var pipeline: OpenCvPipeline
 
     init {
-        val cameraMonitorViewId = hmap.appContext.resources.getIdentifier(
-            "cameraMonitorViewId", "id", hmap.appContext.packageName
-        )
         camera = OpenCvCameraFactory.getInstance().createWebcam(
-            hmap.get(WebcamName::class.java, config), cameraMonitorViewId
+            hmap.get(WebcamName::class.java, config), hmap.appContext.resources.getIdentifier(
+                "cameraMonitorViewId", "id", hmap.appContext.packageName
+            )
         )
     }
 
     infix fun set(pipeline: OpenCvPipeline): UniversalWebcam {
-        this.pipeline = pipeline
         camera.setPipeline(pipeline)
         return this
     }
 
-    private fun start(): UniversalWebcam {
+    fun start(): UniversalWebcam {
         camera.openCameraDeviceAsync(object : AsyncCameraOpenListener {
             override fun onOpened() { camera.startStreaming(width, height, orientation) }
             override fun onError(errorCode: Int) {}
