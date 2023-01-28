@@ -5,6 +5,8 @@ import com.san68bot.alphaLib.geometry.Angle.Companion.degrees
 import com.san68bot.alphaLib.geometry.Angle.Companion.radians
 import kotlin.math.PI
 import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  * Calculates and converts the angle between the two points to a unit circle angle
@@ -82,4 +84,16 @@ fun bisectedArcToUnitCircle(angle: Angle): Angle {
     var rad = unitCircleMirrored(angle).rad
     if (rad >= TAU) rad -= TAU
     return rad.radians
+}
+
+/**
+ * Rotates a point around a pivot point by a given unit circle angle with an optional x or y offset
+ */
+fun rotate(pivotX: Double, pivotY: Double, angle: Angle, offset_x: Double = 0.0, offset_y: Double = 0.0): Point {
+    val a0 = fullCircleToBisectedArc((PI/2.0).radians - angle).rad
+    val (cos, sin) = cos(a0) to sin(a0)
+    return Point(
+        (offset_x) * cos - (offset_y) * sin + pivotX,
+        (offset_x) * sin + (offset_y) * cos + pivotY
+    )
 }
