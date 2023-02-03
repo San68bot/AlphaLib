@@ -9,6 +9,7 @@ import com.san68bot.alphaLib.subsystem.Robot
 import com.san68bot.alphaLib.utils.field.Alliance
 import com.san68bot.alphaLib.utils.field.Globals
 import com.san68bot.alphaLib.utils.field.RunData
+import com.san68bot.alphaLib.utils.math.round
 import com.san68bot.alphaLib.wrappers.util.AGps4
 import com.san68bot.alphaLib.wrappers.util.ActionTimer
 import com.san68bot.alphaLib.wrappers.util.PS4Master
@@ -32,8 +33,8 @@ abstract class AlphaGoInterface(
     lateinit var telemetryBuilder: TelemetryBuilder
 
     private var hasStarted = false
-    private val loopTimer = ActionTimer()
-    private val runTimeTimer = ActionTimer()
+    private val run_time = ActionTimer()
+    private var prev_loop_time = 0.0
 
     /**
      * The current stage of the opmode
@@ -84,7 +85,7 @@ abstract class AlphaGoInterface(
         // Run on init
         onInit()
 
-        loopTimer.reset()
+        run_time.reset()
         eventLoop@ while (true) {
             // Update PS4 controllers
             PS4Master.update()
@@ -108,7 +109,7 @@ abstract class AlphaGoInterface(
                         startPose?.let { GlobalPosition.setPosition(it) }
 
                         // Reset run timer
-                        runTimeTimer.reset()
+                        run_time.reset()
 
                         // Run once on start
                         onStart()
@@ -130,14 +131,13 @@ abstract class AlphaGoInterface(
             robot.update()
 
             // Update telemetry, with some extra data
+            val loop_ms = run_time.milliseconds
             telemetryBuilder
-                .telemetryAdd("seconds till end", secondsTillEnd)
-                .telemetryAdd("seconds into mode", secondsIntoMode)
-                .telemetryAdd("loop time", loopTimer.milliseconds)
+                .add("seconds till end", secondsTillEnd round 2)
+                .add("seconds into mode", secondsIntoMode round 2)
+                .add("loop time hz", (1000.0 / (loop_ms - prev_loop_time)) round 3)
                 .update()
-
-            // Reset loop timer
-            loopTimer.reset()
+            prev_loop_time = loop_ms
         }
         // Run once on stop
         onStop()
@@ -153,7 +153,7 @@ abstract class AlphaGoInterface(
      * Seconds the opmode has been running
      */
     val secondsIntoMode: Double get() =
-        runTimeTimer.seconds
+        run_time.seconds
 
     /**
      * Anything you want to do before the robot gets setup, e.g. setup camera / modify subsystem variables
