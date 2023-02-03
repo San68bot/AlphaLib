@@ -32,7 +32,7 @@ class IMU(private val frequencyMS: Double = 0.0, orientation: RevHubOrientationO
     fun pitch() = robotYawPitchRollAngles.getPitch(AngleUnit.RADIANS)
     fun roll() = robotYawPitchRollAngles.getRoll(AngleUnit.RADIANS)
 
-    fun xRotationRate() = angularVelocity.xRotationRate
-    fun yRotationRate() = angularVelocity.yRotationRate
-    fun zRotationRate() = angularVelocity.zRotationRate
+    fun xRotationRate() = angularVelocity.xRotationRate.toDouble()
+    fun yRotationRate() = angularVelocity.yRotationRate.toDouble()
+    fun zRotationRate() = angularVelocity.zRotationRate.toDouble()
 }

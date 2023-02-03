@@ -55,7 +55,7 @@ class DriveEncoderLocalizer(
         override fun getWheelPositions(): List<Double> = motors.map { encoderTicksToInches(it.currentPosition()) }
         override fun getWheelVelocities(): List<Double> = motors.map { encoderTicksToInches(it.velocity) }
         override fun setMotorPowers(frontLeft: Double, rearLeft: Double, rearRight: Double, frontRight: Double) {}
-        override val rawExternalHeading: Double get() = imu.firstAngle
-        override fun getExternalHeadingVelocity(): Double = imu.zRotationRate
+        override val rawExternalHeading: Double get() = imu.yaw()
+        override fun getExternalHeadingVelocity(): Double = imu.zRotationRate()
     }
 }
