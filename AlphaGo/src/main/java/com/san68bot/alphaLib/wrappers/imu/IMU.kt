@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation
 
 class IMU(private val frequencyMS: Double = 0.0, hmap: HardwareMap = Globals.hmap) {
-    private val imu: BNO055IMU = hmap.get(BNO055IMU::class.java, "imu")
+    val imu: BNO055IMU = hmap.get(BNO055IMU::class.java, "imu")
     private val frequencyTimer = ActionTimer()
 
     init {
