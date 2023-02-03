@@ -45,7 +45,7 @@ class TwoWheelOdometry(
         TwoWheelMath.update(
             vert_encoder.position,
             horiz_encoder.position,
-            imu.yaw(),
+            -imu.yaw(),
             verticalEncoder.currentPos * inchesPerTick,
             horizontalEncoder.currentPos * inchesPerTick
         )
