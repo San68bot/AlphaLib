@@ -1,42 +1,38 @@
 package com.san68bot.alphaLib.wrappers.imu
 
-import com.qualcomm.hardware.bosch.BNO055IMU
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot
 import com.qualcomm.robotcore.hardware.HardwareMap
+import com.qualcomm.robotcore.hardware.IMU
 import com.san68bot.alphaLib.utils.field.Globals
 import com.san68bot.alphaLib.wrappers.util.ActionTimer
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles
 
-class IMU(private val frequencyMS: Double = 0.0, hmap: HardwareMap = Globals.hmap) {
-    val imu: BNO055IMU = hmap.get(BNO055IMU::class.java, "imu")
+class IMU(private val frequencyMS: Double = 0.0, orientation: RevHubOrientationOnRobot, hmap: HardwareMap = Globals.hmap) {
+    val imu: IMU = hmap.get(IMU::class.java, "imu")
     private val frequencyTimer = ActionTimer()
 
+    lateinit var robotYawPitchRollAngles: YawPitchRollAngles
+    lateinit var angularVelocity: AngularVelocity
+
     init {
-        val params = BNO055IMU.Parameters()
-        params.angleUnit = BNO055IMU.AngleUnit.RADIANS
-        imu.initialize(params)
-        BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NPN)//first = z, second = x, third = y
+        imu.initialize(IMU.Parameters(orientation))
         frequencyTimer.reset()
     }
-
-    private var angularOrientation: Orientation = Orientation()
-    private var angularVelocity: AngularVelocity = AngularVelocity()
 
     fun update() {
-        if (!frequencyMS.isNaN() && frequencyTimer.milliseconds < frequencyMS) return
-        angularOrientation = imu.angularOrientation
-        angularVelocity = imu.angularVelocity
+        if (!frequencyMS.isNaN() && frequencyTimer.milliseconds <= frequencyMS) return
+        robotYawPitchRollAngles = imu.robotYawPitchRollAngles
+        angularVelocity = imu.getRobotAngularVelocity(AngleUnit.RADIANS)
         frequencyTimer.reset()
     }
 
-    val firstAngle get() = angularOrientation.firstAngle.toDouble()
-    val secondAngle get() = angularOrientation.secondAngle.toDouble()
-    val thirdAngle get() = angularOrientation.thirdAngle.toDouble()
+    fun yaw() = robotYawPitchRollAngles.getYaw(AngleUnit.RADIANS)
+    fun pitch() = robotYawPitchRollAngles.getPitch(AngleUnit.RADIANS)
+    fun roll() = robotYawPitchRollAngles.getRoll(AngleUnit.RADIANS)
 
-    val xRotationRate get() = angularVelocity.xRotationRate.toDouble()
-    val yRotationRate get() = angularVelocity.yRotationRate.toDouble()
-    val zRotationRate get() = angularVelocity.zRotationRate.toDouble()
-
-    fun disable() = imu.close()
+    fun xRotationRate() = angularVelocity.xRotationRate
+    fun yRotationRate() = angularVelocity.yRotationRate
+    fun zRotationRate() = angularVelocity.zRotationRate
 }
