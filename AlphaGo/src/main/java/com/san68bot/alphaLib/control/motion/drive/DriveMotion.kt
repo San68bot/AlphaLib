@@ -8,9 +8,11 @@ import com.san68bot.alphaLib.control.motion.drive.Speedometer.speed
 import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_angle
 import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_angle_bisectedArc
 import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_point
+import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_rad
 import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_x
 import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_y
 import com.san68bot.alphaLib.geometry.*
+import com.san68bot.alphaLib.geometry.Angle.Companion.degrees
 import com.san68bot.alphaLib.geometry.Angle.Companion.radians
 import com.san68bot.alphaLib.subsystem.drive.Mecanum
 import com.san68bot.alphaLib.subsystem.drive.Mecanum.Companion.turnPID
@@ -51,6 +53,16 @@ object DriveMotion {
     private var y_mp: MotionProfile? = null
 
     /**
+     * Theta motion profile
+     */
+    private var theta_mp: MotionProfile? = null
+
+    /**
+     * Initial theta for theta mp
+     */
+    private var theta_initial = 0.0
+
+    /**
      * Motion profile one time to set the motion profile
      */
     private val mpOneTime = OneTime()
@@ -73,8 +85,17 @@ object DriveMotion {
         stop()
         x_mp = null
         y_mp = null
+        theta_mp = null
+        theta_initial = 0.0
         mpOneTime.reset()
         mpTimer.reset()
+    }
+
+    /**
+     * Resets the motion profile
+     */
+    fun resetMotionProfile() {
+        objectReset()
     }
 
     /**
@@ -118,22 +139,17 @@ object DriveMotion {
     }
 
     /**
-     * Resets the motion profile
-     */
-    fun resetMotionProfile() {
-        mpOneTime.reset()
-    }
-
-    /**
      * Motion profile implementation of goToPose
      */
     fun goToPose_mp(x: Double, y: Double, theta: Angle): MovementResults {
         mpOneTime.once {
             x_mp = MotionProfileGenerator.generateSimpleMotionProfile(
-                MotionState(global_x, 0.0, 0.0), MotionState(x, 0.0, 0.0), Mecanum.max_velo, Mecanum.max_accel
+                MotionState(global_x, 0.0, 0.0),
+                MotionState(x, 0.0, 0.0), Mecanum.max_velo, Mecanum.max_accel
             )
             y_mp = MotionProfileGenerator.generateSimpleMotionProfile(
-                MotionState(global_y, 0.0, 0.0), MotionState(y, 0.0, 0.0), Mecanum.max_velo, Mecanum.max_accel
+                MotionState(global_y, 0.0, 0.0),
+                MotionState(y, 0.0, 0.0), Mecanum.max_velo, Mecanum.max_accel
             )
             mpTimer.reset()
         }
@@ -198,6 +214,41 @@ object DriveMotion {
          */
         logData(Pose(Double.NaN, Double.NaN, theta), Pose(global_point, angleError))
         return angleError
+    }
+
+    fun pointAngle_mp(theta: Angle): Angle {
+        /**
+         * Angle errors
+         */
+        val angleError = fullCircleToBisectedArc(theta - global_angle)
+
+        /**
+         * Generating the motion profile
+         */
+        mpOneTime.once {
+            theta_initial = global_rad
+            theta_mp = MotionProfileGenerator.generateSimpleMotionProfile(
+                MotionState(0.0, 0.0, 0.0),
+                MotionState(angleError.rad, 0.0, 0.0), Mecanum.max_omega, Mecanum.max_alpha
+            )
+            mpTimer.reset()
+        }
+
+        /**
+         * Offseting the mp value
+         */
+        val mp_theta_target = (theta_initial - (theta_mp!![mpTimer.seconds].x * angleError.sign())).radians
+
+        /**
+         * Angle speed using PID calculations and robot speed
+         */
+        drive_omega = mp_theta_target.deg * turnPID.kP - degPerSec * turnPID.kD
+
+        /**
+         * Log results
+         */
+        logData(Pose(Double.NaN, Double.NaN, theta), Pose(global_point, mp_theta_target))
+        return mp_theta_target
     }
 
     /**

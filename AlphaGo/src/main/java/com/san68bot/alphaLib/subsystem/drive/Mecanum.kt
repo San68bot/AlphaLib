@@ -13,7 +13,9 @@ open class Mecanum(
     yPID: PIDConstants,
     turnPID: PIDConstants,
     max_velo: Double,
-    max_accel: Double
+    max_accel: Double,
+    max_omega: Double,
+    max_alpha: Double
 ): Subsystem {
     /**
      * Powers for each wheel
@@ -32,6 +34,8 @@ open class Mecanum(
         Companion.turnPID set turnPID
         Companion.max_velo = max_velo
         Companion.max_accel = max_accel
+        Companion.max_omega = max_omega
+        Companion.max_alpha = max_alpha
     }
 
     /**
@@ -102,5 +106,7 @@ open class Mecanum(
         var turnPID = PIDConstants()
         var max_velo = 0.0
         var max_accel = 0.0
+        var max_omega = 0.0
+        var max_alpha = 0.0
     }
 }

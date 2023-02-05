@@ -70,6 +70,8 @@ data class Angle(var heading: Double, var unit: Unit) {
         Unit.DEG -> (-deg).degrees
     }
 
+    fun sign() = heading.sign
+
     operator fun times(scaler: Double) = Angle(heading * scaler, unit)
 
     override fun toString(): String  = "deg: $deg, rad: $rad"
