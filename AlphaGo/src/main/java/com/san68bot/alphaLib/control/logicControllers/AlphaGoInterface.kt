@@ -9,6 +9,7 @@ import com.san68bot.alphaLib.subsystem.Robot
 import com.san68bot.alphaLib.utils.field.Alliance
 import com.san68bot.alphaLib.utils.field.Globals
 import com.san68bot.alphaLib.utils.field.RunData
+import com.san68bot.alphaLib.utils.math.round
 import com.san68bot.alphaLib.wrappers.util.AGps4
 import com.san68bot.alphaLib.wrappers.util.ActionTimer
 import com.san68bot.alphaLib.wrappers.util.PS4Master
@@ -33,6 +34,9 @@ abstract class AlphaGoInterface(
 
     private var hasStarted = false
     private val loopTimer = ActionTimer()
+    private var prev_loop_speed = 0.0
+    var loop_speed_hz = 0.0
+        private set
     private val runTimeTimer = ActionTimer()
 
     /**
@@ -130,14 +134,14 @@ abstract class AlphaGoInterface(
             robot.update()
 
             // Update telemetry, with some extra data
+            val loopTime = loopTimer.milliseconds
+            loop_speed_hz = 1000.0 / (loopTime - prev_loop_speed)
             telemetryBuilder
-                .telemetryAdd("seconds till end", secondsTillEnd)
-                .telemetryAdd("seconds into mode", secondsIntoMode)
-                .telemetryAdd("loop time", loopTimer.milliseconds)
+                .add("seconds till end", secondsTillEnd round 2)
+                .add("seconds into mode", secondsIntoMode round 2)
+                .add("loop time hz", loop_speed_hz round 3)
                 .update()
-
-            // Reset loop timer
-            loopTimer.reset()
+            prev_loop_speed = loopTime
         }
         // Run once on stop
         onStop()
