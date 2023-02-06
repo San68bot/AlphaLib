@@ -139,7 +139,7 @@ abstract class AlphaGoInterface(
             telemetryBuilder
                 .add("seconds till end", secondsTillEnd round 2)
                 .add("seconds into mode", secondsIntoMode round 2)
-                .add("loop time hz", loop_speed_hz round 3)
+                .add("loop time hz", loop_speed_hz round 1)
                 .update()
             prev_loop_speed = loopTime
         }

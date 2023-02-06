@@ -23,8 +23,7 @@ import com.san68bot.alphaLib.utils.field.Globals.telemetryBuilder
 import com.san68bot.alphaLib.utils.field.RunData.ALLIANCE
 import com.san68bot.alphaLib.utils.math.*
 import com.san68bot.alphaLib.wrappers.util.*
-import kotlin.math.abs
-import kotlin.math.atan2
+import kotlin.math.*
 
 object DriveMotion {
     /**
@@ -61,6 +60,7 @@ object DriveMotion {
      * Initial theta for theta mp
      */
     private var theta_initial = 0.0
+    private var theta_error_initial = 0.0.degrees
 
     /**
      * Motion profile one time to set the motion profile
@@ -87,6 +87,7 @@ object DriveMotion {
         y_mp = null
         theta_mp = null
         theta_initial = 0.0
+        theta_error_initial = 0.0.degrees
         mpOneTime.reset()
         mpTimer.reset()
     }
@@ -218,18 +219,14 @@ object DriveMotion {
 
     fun pointAngle_mp(theta: Angle): Angle {
         /**
-         * Angle errors
-         */
-        val angleError = fullCircleToBisectedArc(theta - global_angle)
-
-        /**
          * Generating the motion profile
          */
         mpOneTime.once {
             theta_initial = global_rad
+            theta_error_initial = fullCircleToBisectedArc(theta - global_angle)
             theta_mp = MotionProfileGenerator.generateSimpleMotionProfile(
                 MotionState(0.0, 0.0, 0.0),
-                MotionState(angleError.rad, 0.0, 0.0), Mecanum.max_omega, Mecanum.max_alpha
+                MotionState(theta_error_initial.rad, 0.0, 0.0), Mecanum.max_omega, Mecanum.max_alpha
             )
             mpTimer.reset()
         }
@@ -237,18 +234,12 @@ object DriveMotion {
         /**
          * Offseting the mp value
          */
-        val mp_theta_target = (theta_initial - (theta_mp!![mpTimer.seconds].x * angleError.sign())).radians
+        val mp_theta_target = (theta_initial - (theta_mp!![mpTimer.seconds].x * theta_error_initial.sign())).radians
 
-        /**
-         * Angle speed using PID calculations and robot speed
-         */
-        drive_omega = mp_theta_target.deg * turnPID.kP - degPerSec * turnPID.kD
-
-        /**
-         * Log results
-         */
-        logData(Pose(Double.NaN, Double.NaN, theta), Pose(global_point, mp_theta_target))
-        return mp_theta_target
+        return when {
+            (fullCircleToBisectedArc(theta - global_angle).deg).absoluteValue < 2.5 -> pointAngle(theta)
+            else -> pointAngle(mp_theta_target)
+        }
     }
 
     /**
