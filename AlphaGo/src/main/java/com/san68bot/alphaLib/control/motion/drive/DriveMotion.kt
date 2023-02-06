@@ -87,7 +87,7 @@ object DriveMotion {
         y_mp = null
         theta_mp = null
         theta_initial = 0.0
-        theta_error_initial = 0.0.degrees
+        theta_error_initial = (0.0).degrees
         mpOneTime.reset()
         mpTimer.reset()
     }

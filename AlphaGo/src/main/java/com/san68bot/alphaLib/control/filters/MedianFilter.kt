@@ -1,7 +1,11 @@
 package com.san68bot.alphaLib.control.filters
 
 class MedianFilter(private val n: Int) {
-    private val window = ArrayList<Double>()
+    val window = ArrayList<Double>()
+
+    fun clear() {
+        window.clear()
+    }
 
     init { if (n <= 0) throw IllegalArgumentException("n must not be <= 0") }
 

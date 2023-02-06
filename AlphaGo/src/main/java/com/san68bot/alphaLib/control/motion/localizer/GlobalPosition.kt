@@ -34,6 +34,10 @@ object GlobalPosition {
      */
     lateinit var localizer: Localizer
 
+    fun objectReset() {
+        global_pose = Pose(0.0, 0.0, 0.0)
+    }
+
     /**
      * Sets the world position
      */

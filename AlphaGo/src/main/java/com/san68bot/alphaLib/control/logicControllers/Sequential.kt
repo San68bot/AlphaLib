@@ -5,6 +5,10 @@ class Sequential(private vararg val commands: () -> Unit) {
     private var iterator: () -> Boolean = { false }
     private val size = commands.size
 
+    fun reset() {
+        counter = 1
+    }
+
     fun setIterator(iterator: () -> Boolean): Sequential {
         this.iterator = iterator
         return this

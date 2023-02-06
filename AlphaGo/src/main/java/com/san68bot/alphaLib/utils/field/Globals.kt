@@ -17,7 +17,7 @@ object Globals {
     val telemetryBuilder get() = agInterface.telemetryBuilder
 
     fun resetObjects() {
-        GlobalPosition.global_pose = Pose(0.0, 0.0, 0.0)
+        GlobalPosition.objectReset()
         DriveMotion.objectReset()
         TwoWheelMath.objectReset()
         Speedometer.objectReset()

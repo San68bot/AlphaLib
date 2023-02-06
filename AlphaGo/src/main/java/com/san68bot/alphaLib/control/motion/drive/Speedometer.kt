@@ -43,6 +43,8 @@ object Speedometer {
         lastAngle = 0.0
         omega = 0.0
         speed = Point.ORIGIN
+        xFilter.clear()
+        yFilter.clear()
     }
 
     /**

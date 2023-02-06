@@ -73,7 +73,7 @@ abstract class AlphaGoInterface(
         driver = AGps4(gamepad1)
         operator = AGps4(gamepad2)
 
-        if (autonomous) Globals.resetObjects()
+        Globals.resetObjects()
         // Run pre robot setup
         preRobotSetup()
 
@@ -83,7 +83,7 @@ abstract class AlphaGoInterface(
 
         // Setup robot
         robot.setup()
-        startPose?.let { GlobalPosition.setPosition(it) }
+        if (startPose != null) GlobalPosition.setPosition(startPose)
 
         // Run on init
         onInit()
@@ -100,7 +100,7 @@ abstract class AlphaGoInterface(
                 Status.INIT -> {
                     // Run on init loop
                     onInitLoop()
-                    telemetryBuilder.add("Ready to start")
+                    telemetryBuilder.add("Ready")
                 }
 
                 Status.PLAY -> {
@@ -109,7 +109,7 @@ abstract class AlphaGoInterface(
                         onMainLoop()
                     } else { // Run once on start, when opmode has just started
                         // Reset start position
-                        startPose?.let { GlobalPosition.setPosition(it) }
+                        if (startPose != null) GlobalPosition.setPosition(startPose)
 
                         // Reset run timer
                         runTimeTimer.reset()
