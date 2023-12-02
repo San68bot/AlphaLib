@@ -33,11 +33,11 @@ abstract class AlphaGoInterface(
     lateinit var telemetryBuilder: TelemetryBuilder
 
     private var hasStarted = false
-    private val loopTimer = ActionTimer()
+    val loopTimer = ActionTimer()
     private var prev_loop_speed = 0.0
     var loop_speed_hz = 0.0
         private set
-    private val runTimeTimer = ActionTimer()
+    val runTimeTimer = ActionTimer()
 
     /**
      * The current stage of the opmode
