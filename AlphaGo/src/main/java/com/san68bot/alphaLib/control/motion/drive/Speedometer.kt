@@ -3,8 +3,10 @@ package com.san68bot.alphaLib.control.motion.drive
 import com.san68bot.alphaLib.control.filters.MedianFilter
 import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.global_angle_bisectedArc
 import com.san68bot.alphaLib.geometry.Angle
+import com.san68bot.alphaLib.geometry.Angle.Companion.radians
 import com.san68bot.alphaLib.geometry.Point
 import com.san68bot.alphaLib.geometry.toDegrees
+import com.san68bot.alphaLib.utils.math.fullCircleToBisectedArc
 
 object Speedometer {
     /**
@@ -15,7 +17,7 @@ object Speedometer {
     /**
      * The angular velocity
      */
-    private var lastAngle = 0.0
+    private var lastAngle = (0.0).radians
     private var omega = 0.0
 
     /**
@@ -35,14 +37,16 @@ object Speedometer {
     /**
      * X and Y median filters to redeuce speed noise
      */
-    private val xFilter = MedianFilter(7)
-    private val yFilter = MedianFilter(7)
+    private val xFilter = MedianFilter(3)
+    private val yFilter = MedianFilter(3)
 
     fun objectReset() {
         prevTime = 0.0
-        lastAngle = 0.0
+        lastAngle = (0.0).radians
         omega = 0.0
         speed = Point.ORIGIN
+        xFilter.reset_window()
+        yFilter.reset_window()
     }
 
     /**
@@ -55,12 +59,12 @@ object Speedometer {
         prevTime = currTime
 
         // Calculate speeds in x and y
-        val xSpeed = xFilter.push(dx / dt).median()
-        val ySpeed = yFilter.push(dy / dt).median()
+        val xSpeed = dx / dt //xFilter.push(dx / dt).median()
+        val ySpeed = dy / dt //yFilter.push(dy / dt).median()
 
         // Calculate angular velocity
-        omega = (global_angle_bisectedArc.rad - lastAngle) / dt
-        lastAngle = global_angle_bisectedArc.rad
+        omega = -fullCircleToBisectedArc(global_angle_bisectedArc - lastAngle).rad / dt
+        lastAngle = global_angle_bisectedArc
 
         // Sets speed
         speed = pointDelta(

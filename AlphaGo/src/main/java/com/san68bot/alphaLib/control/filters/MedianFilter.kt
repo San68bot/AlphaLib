@@ -5,6 +5,10 @@ class MedianFilter(private val n: Int) {
 
     init { if (n <= 0) throw IllegalArgumentException("n must not be <= 0") }
 
+    fun reset_window() {
+        window.clear()
+    }
+
     fun push(value: Double): MedianFilter {
         window.add(value)
         if(window.size > n) window.removeAt(0)
