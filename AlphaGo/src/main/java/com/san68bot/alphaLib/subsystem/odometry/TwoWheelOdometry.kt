@@ -11,14 +11,12 @@ import com.san68bot.alphaLib.wrappers.hardware.AGEncoder
 import com.san68bot.alphaLib.wrappers.imu.IMU
 import kotlin.math.PI
 
-data class TwoWheelConfig(val config: String, val reverse: Boolean, val position: Point)
-
 class TwoWheelOdometry(
     private val imu: IMU,
-    private val vert_encoder: TwoWheelConfig,
-    private val horiz_encoder: TwoWheelConfig,
+    private val vert_encoder: OdometryConfig,
+    private val horiz_encoder: OdometryConfig,
     val hmap: HardwareMap = Globals.hmap
-): Localizer {
+) : Localizer {
     private val encoder_ticks = 8192.0
     private val wheel_dia = 1.889764
 
@@ -35,8 +33,8 @@ class TwoWheelOdometry(
     )
 
     init {
-        if(vert_encoder.reverse) verticalEncoder.reverse()
-        if(horiz_encoder.reverse) horizontalEncoder.reverse()
+        if (vert_encoder.reverse) verticalEncoder.reverse()
+        if (horiz_encoder.reverse) horizontalEncoder.reverse()
     }
 
     private val inchesPerTick = (wheel_dia * PI) / encoder_ticks

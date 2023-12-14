@@ -4,6 +4,7 @@ import com.san68bot.alphaLib.control.logicControllers.AlphaGoInterface
 import com.san68bot.alphaLib.control.motion.drive.DriveMotion
 import com.san68bot.alphaLib.control.motion.drive.Speedometer
 import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition
+import com.san68bot.alphaLib.control.motion.localizer.method.ThreeWheelMath
 import com.san68bot.alphaLib.control.motion.localizer.method.TwoWheelMath
 import com.san68bot.alphaLib.geometry.Pose
 
@@ -20,6 +21,7 @@ object Globals {
         GlobalPosition.global_pose = Pose(0.0, 0.0, 0.0)
         DriveMotion.objectReset()
         TwoWheelMath.objectReset()
+        ThreeWheelMath.objectReset()
         Speedometer.objectReset()
     }
 
