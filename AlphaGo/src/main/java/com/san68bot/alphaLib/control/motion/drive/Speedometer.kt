@@ -34,19 +34,11 @@ object Speedometer {
     var speed: Point = Point.ORIGIN
         private set
 
-    /**
-     * X and Y median filters to redeuce speed noise
-     */
-    private val xFilter = MedianFilter(3)
-    private val yFilter = MedianFilter(3)
-
     fun objectReset() {
         prevTime = 0.0
         lastAngle = (0.0).radians
         omega = 0.0
         speed = Point.ORIGIN
-        xFilter.reset_window()
-        yFilter.reset_window()
     }
 
     /**
