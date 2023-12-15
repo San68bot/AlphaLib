@@ -39,6 +39,6 @@ object GlobalPosition {
      */
     fun setPosition(pose: Pose) {
         global_pose = pose
-        localizer.reset(pose)
+        if (this::localizer.isInitialized) localizer.reset(pose)
     }
 }

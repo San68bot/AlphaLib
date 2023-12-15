@@ -19,7 +19,7 @@ abstract class AlphaGoInterface(
     val robot: Robot,
     private val alliance: Alliance,
     private val autonomous: Boolean,
-    private val startPose: Pose?
+    private val startPose: Pose
 ): LinearOpMode() {
     /**
      * PS4 Controller objects, to be used in the opmode
@@ -56,7 +56,8 @@ abstract class AlphaGoInterface(
         // Set global variables
         Globals.apply {
             agInterface = this@AlphaGoInterface
-            isAuto = autonomous; isTeleop = !autonomous
+            isAuto = autonomous;
+            isTeleop = !autonomous
         }
 
         // Set alliance of current run
@@ -70,7 +71,6 @@ abstract class AlphaGoInterface(
         driver = AGps4(gamepad1)
         operator = AGps4(gamepad2)
 
-        if (autonomous) Globals.resetObjects()
         // Run pre robot setup
         preRobotSetup()
 
@@ -80,10 +80,12 @@ abstract class AlphaGoInterface(
 
         // Setup robot
         robot.setup()
-        startPose?.let { GlobalPosition.setPosition(it) }
 
         // Run on init
         onInit()
+
+        Globals.resetObjects()
+        GlobalPosition.setPosition(startPose)
 
         run_time.reset()
         eventLoop@ while (true) {
@@ -106,7 +108,7 @@ abstract class AlphaGoInterface(
                         onMainLoop()
                     } else { // Run once on start, when opmode has just started
                         // Reset start position
-                        startPose?.let { GlobalPosition.setPosition(it) }
+                        GlobalPosition.setPosition(startPose)
 
                         // Reset run timer
                         run_time.reset()
