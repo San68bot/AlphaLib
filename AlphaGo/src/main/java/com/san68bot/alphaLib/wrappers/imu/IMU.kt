@@ -9,8 +9,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles
 
-class IMU(private val frequencyMS: Double = 0.0, orientation: RevHubOrientationOnRobot, hmap: HardwareMap = Globals.hmap) {
-    val imu: IMU = hmap.get(IMU::class.java, "imu")
+class IMU(config: String, private val frequencyMS: Double = 0.0, orientation: RevHubOrientationOnRobot, hmap: HardwareMap = Globals.hmap) {
+    private val imu: IMU = hmap.get(IMU::class.java, config)
     private val frequencyTimer = ActionTimer()
 
     lateinit var robotYawPitchRollAngles: YawPitchRollAngles
