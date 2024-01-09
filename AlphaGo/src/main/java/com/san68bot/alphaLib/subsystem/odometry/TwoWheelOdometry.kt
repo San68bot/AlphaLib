@@ -10,12 +10,14 @@ import com.san68bot.alphaLib.utils.field.Globals
 import com.san68bot.alphaLib.wrappers.hardware.AGEncoder
 import com.san68bot.alphaLib.wrappers.imu.IMU
 import kotlin.math.PI
+import kotlin.math.abs
 
 class TwoWheelOdometry(
     private val imu: IMU,
     private val vert_encoder: OdometryConfig,
     private val horiz_encoder: OdometryConfig,
-    val hmap: HardwareMap = Globals.hmap
+    private val hmap: HardwareMap = Globals.hmap,
+    private val update2: Boolean = true
 ) : Localizer {
     private val encoder_ticks = 8192.0
     private val wheel_dia = 1.889764
@@ -38,15 +40,28 @@ class TwoWheelOdometry(
     }
 
     private val inchesPerTick = (wheel_dia * PI) / encoder_ticks
+    fun verticle_inches() = verticalEncoder.currentPos * inchesPerTick
+    fun horizontal_inches() = horizontalEncoder.currentPos * inchesPerTick
+
+    private val aux_track_width = abs(vert_encoder.position.y) + abs(horiz_encoder.position.y)
 
     override fun update() {
-        TwoWheelMath.update(
-            vert_encoder.position,
-            horiz_encoder.position,
-            -imu.yaw(),
-            verticalEncoder.currentPos * inchesPerTick,
-            horizontalEncoder.currentPos * inchesPerTick
-        )
+        if (update2) {
+            TwoWheelMath.update2(
+                aux_track_width,
+                -imu.yaw(),
+                verticle_inches(),
+                horizontal_inches()
+            )
+        } else {
+            TwoWheelMath.update(
+                vert_encoder.position,
+                horiz_encoder.position,
+                -imu.yaw(),
+                verticalEncoder.currentPos * inchesPerTick,
+                horizontalEncoder.currentPos * inchesPerTick
+            )
+        }
 
         Speedometer.update(
             TwoWheelMath.xDelta(),
