@@ -44,7 +44,8 @@ object TwoWheelMath {
     }
 
     fun update2(
-        aux_track_width: Double,
+        x_track_width: Double,
+        y_track_width: Double,
         imu_angle: Double,
         vertical_inches: Double,
         horizontal_inches: Double
@@ -53,11 +54,8 @@ object TwoWheelMath {
         val delta_horizontal = horizontal_inches - last_horizontal
         val delta_theta = fullCircleToBisectedArc((imu_angle - last_imu).radians)
 
-        val x_arclength = delta_theta.rad * aux_track_width
-        //val y_arclength = delta_theta.rad * (vertical_position.hypot * -vertical_position.angle.rad.msign)
-
-        r_x = delta_horizontal - x_arclength
-        r_y = delta_vertical// - y_arclength
+        r_x = delta_horizontal - (delta_theta.rad * x_track_width)
+        r_y = delta_vertical - (delta_theta.rad * y_track_width)
 
         val (sin, cos) = if (delta_theta.rad epsilonEquals 0.0) {
             1.0 - delta_theta.rad.pow(2) / 6.0 to delta_theta.rad / 2.0
@@ -90,6 +88,8 @@ object TwoWheelMath {
     fun update(
         vertical_position: Point,
         horizontal_position: Point,
+        vertical_flip: Double,
+        horizontal_flip: Double,
         imu_angle: Double,
         vertical_inches: Double,
         horizontal_inches: Double
@@ -98,8 +98,8 @@ object TwoWheelMath {
         val delta_horizontal = horizontal_inches - last_horizontal
         val delta_theta = fullCircleToBisectedArc((imu_angle - last_imu).radians)
 
-        val x_arclength = delta_theta.rad * (horizontal_position.hypot * -horizontal_position.angle.rad.msign)
-        val y_arclength = delta_theta.rad * (vertical_position.hypot * -vertical_position.angle.rad.msign)
+        val x_arclength = delta_theta.rad * (horizontal_position.hypot * horizontal_flip * horizontal_position.angle.rad.msign)
+        val y_arclength = delta_theta.rad * (vertical_position.hypot * vertical_flip * vertical_position.angle.rad.msign)
 
         r_x = delta_horizontal - x_arclength
         r_y = delta_vertical - y_arclength

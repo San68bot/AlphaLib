@@ -16,8 +16,10 @@ class TwoWheelOdometry(
     private val imu: IMU,
     private val vert_encoder: OdometryConfig,
     private val horiz_encoder: OdometryConfig,
-    private val hmap: HardwareMap = Globals.hmap,
-    private val update2: Boolean = true
+    private val update2: Boolean,
+    private val vertical_flip: Double,
+    private val horizontal_flip: Double,
+    hmap: HardwareMap = Globals.hmap
 ) : Localizer {
     private val encoder_ticks = 8192.0
     private val wheel_dia = 1.889764
@@ -43,12 +45,11 @@ class TwoWheelOdometry(
     fun verticle_inches() = verticalEncoder.currentPos * inchesPerTick
     fun horizontal_inches() = horizontalEncoder.currentPos * inchesPerTick
 
-    private val aux_track_width = abs(vert_encoder.position.y) + abs(horiz_encoder.position.y)
-
     override fun update() {
         if (update2) {
             TwoWheelMath.update2(
-                aux_track_width,
+                horiz_encoder.position.y,
+                vert_encoder.position.x,
                 -imu.yaw(),
                 verticle_inches(),
                 horizontal_inches()
@@ -57,6 +58,8 @@ class TwoWheelOdometry(
             TwoWheelMath.update(
                 vert_encoder.position,
                 horiz_encoder.position,
+                vertical_flip,
+                horizontal_flip,
                 -imu.yaw(),
                 verticalEncoder.currentPos * inchesPerTick,
                 horizontalEncoder.currentPos * inchesPerTick
