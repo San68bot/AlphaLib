@@ -1,5 +1,7 @@
 package com.san68bot.alphaLib.control.motion.localizer
 
+import com.san68bot.alphaLib.geometry.Angle
+import com.san68bot.alphaLib.geometry.Angle.Companion.degrees
 import com.san68bot.alphaLib.geometry.Pose
 import com.san68bot.alphaLib.subsystem.Localizer
 import com.san68bot.alphaLib.utils.math.unitCircleToBisectedArc
@@ -40,5 +42,23 @@ object GlobalPosition {
     fun setPosition(pose: Pose) {
         global_pose = pose
         if (this::localizer.isInitialized) localizer.reset(pose)
+    }
+
+    /**
+     * Maximum distance error
+     */
+    var MAX_DISTANCE_ERROR = 1.0
+
+    /**
+     * Maximum angle error
+     */
+    var MAX_ANGLE_ERROR = (1.0).degrees
+
+    /**
+     * Sets maximum error thresholds for autonomous
+     */
+    fun setMaximumError(max_distance: Double, max_angle: Angle) {
+        MAX_DISTANCE_ERROR = max_distance
+        MAX_ANGLE_ERROR = max_angle
     }
 }

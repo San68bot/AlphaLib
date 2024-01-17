@@ -1,5 +1,8 @@
 package com.san68bot.alphaLib.control.motion.drive
 
+import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition
+import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.MAX_ANGLE_ERROR
+import com.san68bot.alphaLib.control.motion.localizer.GlobalPosition.MAX_DISTANCE_ERROR
 import com.san68bot.alphaLib.geometry.*
 import kotlin.math.abs
 import kotlin.math.absoluteValue
@@ -10,7 +13,7 @@ class MovementResults(private val positionError: Pose) {
     /**
      * Checks if the current distance error is within the threshold and the current angle error is within the threshold
      */
-    fun check(distance: Double, angle: Angle): Boolean =
+    fun check(distance: Double = MAX_DISTANCE_ERROR, angle: Angle = MAX_ANGLE_ERROR): Boolean =
         (abs(distanceError()) <= distance) && (abs(angleError().deg) <= angle.deg)
 
     /**
@@ -26,7 +29,7 @@ class MovementResults(private val positionError: Pose) {
     /**
      * Another implementation of check() that runs a block if the errors are within the threshold
      */
-    fun check(distance: Double, angle: Angle, stopDrive: Boolean = true, block: () -> Unit): Boolean {
+    fun check(distance: Double = MAX_DISTANCE_ERROR, angle: Angle = MAX_ANGLE_ERROR, stopDrive: Boolean = true, block: () -> Unit): Boolean {
         if (check(distance, angle)) {
             if (stopDrive) DriveMotion.stop()
             block()

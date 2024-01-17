@@ -38,7 +38,10 @@ class TwoWheelOdometry(
 
     init {
         if (vert_encoder.reverse) verticalEncoder.reverse()
+        verticalEncoder.reset(0.0)
+
         if (horiz_encoder.reverse) horizontalEncoder.reverse()
+        horizontalEncoder.reset(0.0)
     }
 
     private val inchesPerTick = (wheel_dia * PI) / encoder_ticks
@@ -61,8 +64,8 @@ class TwoWheelOdometry(
                 vertical_flip,
                 horizontal_flip,
                 -imu.yaw(),
-                verticalEncoder.currentPos * inchesPerTick,
-                horizontalEncoder.currentPos * inchesPerTick
+                verticle_inches(),
+                horizontal_inches()
             )
         }
 
