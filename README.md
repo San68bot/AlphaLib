@@ -6,6 +6,8 @@
 
 **AlphaLib** is a holistic robotics control framework designed for *FIRST Tech Challenge (FTC)* that integrates advanced motion planning, sensor fusion, and hardware abstraction into a single cohesive system. Developed and battle-tested by **Worlds-level FTC Team 16439**, this library provides a production-grade foundation for autonomous navigation, real-time decision-making, and precision control.
 
+[Click here to view it in action!](https://photos.app.goo.gl/mSqsp3QqC1YvYejc7)
+
 ---
 
 ## 🚀 Why AlphaLib?
