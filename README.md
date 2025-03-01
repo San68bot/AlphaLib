@@ -128,8 +128,3 @@ AlphaLib synthesizes decades of robotics research into an FTC-optimized package:
 
 **License**: MIT  
 **Maintainer**: [San68bot](https://github.com/San68bot)  
-
-``` 
-
-[![Get Started](https://img.shields.io/badge/Examples-Advanced%20Autonomous-blue)](https://github.com/San68bot/AlphaLib/tree/main/examples)  
-```
